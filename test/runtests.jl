@@ -1,3 +1,3 @@
 using Test
 
-# Include tests
+include("PREM_tests.jl")
