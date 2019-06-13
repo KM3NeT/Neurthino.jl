@@ -1,0 +1,8 @@
+image: julia:1.1.1
+
+stages:
+    - test
+
+test:
+    script:
+        - julia test/runtests.jl
