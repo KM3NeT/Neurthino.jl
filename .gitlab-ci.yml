@@ -5,4 +5,4 @@ stages:
 
 test:
     script:
-        - julia test/runtests.jl
+        - julia --project test/runtests.jl
