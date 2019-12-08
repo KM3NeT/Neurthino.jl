@@ -8,9 +8,45 @@ import Polynomials: Poly
 include("PREM.jl")
 
 struct OscillationParameters
+    dim::Integer
     mixing_angles::AbstractSparseMatrix{T, S} where {T <: Real, S <: Integer}
     mass_::AbstractSparseMatrix{T, S} where {T <: Real, S <: Integer}
-    cp_phase::T where {T <: Real}
+    cp_phases::AbstractSparseMatrix{T, S} where {T <: Real, S <: Integer}
+end
+
+function generate_ordered_index_pairs(n::Integer)
+    number_of_angles = number_mixing_angles(n)
+    indices = Vector{Pair{Int64,Int64}}(undef, number_of_angles)
+    a = 1
+    for i in 1:n 
+        for j in 1:i-1
+            indices[a] = Pair(j,i)
+            a += 1
+        end
+    end
+    indices
+end
+
+function make_pmns_matrix(osc_params::OscillationParameters)
+    pmns = sparse(1.0I, osc_params.dim, osc_params.dim) 
+    indices = generate_ordered_index_pairs(osc_params.dim)
+    for (i, j) in indices
+        rot = sparse(1.0I, osc_params.dim, osc_params.dim) 
+        mixing_angle = osc_params.mixing_angles[i, j]
+        c, s = cos(mixing_angle), sin(mixing_angle)
+        rot[i, i] = c
+        rot[j, j] = c
+        rot[i, j] = s
+        rot[j, i] = -s
+        if CartesianIndex(i, j) in osc_params.cp_phases
+            cp_phase = osc_params.cp_phases[i, j]
+            cp_term = exp(-1im * cp_phase)
+            rot[i, j] *= cp_term
+            rot[j, i] *= conj(cp_term)
+        end
+        pmns = rot * pmns 
+    end
+    pmns
 end
 
 """
@@ -27,9 +63,8 @@ Calculate the transistion probability between two neutrino flavours
 function transition_probability(U::AbstractArray{T, 2}, H::AbstractVector{S}, L::R) where {T <: Number, S <: Real, R <: Real} 
     H_diag = Diagonal(H)
     A = adjoint(U) * exp(-1im * H_diag * L) * U
-    P = abs.(A) .^ 2
+    P = A * adjoint(A) 
 end
-
 
 """
     number_cp_phases(n::Unsigned)
@@ -50,7 +85,6 @@ function number_cp_phases(n::T) where {T <: Integer}
     cp_phases = div( (n-1)*(n-2) , 2 )
 end
 
-
 """
     number_mixing_angles(n::Unsigned)
 
@@ -65,11 +99,9 @@ julia> Neurthino.number_mixing_phases(3)
 3
 ```
 """
-function number_mixing_angles(n::T) where {T <: Unsigned}
+function number_mixing_angles(n::T) where {T <: Integer}
     if (n < 1) return 0 end
     mixing_angles = div( n*(n-1) , 2 )
 end
-
-
 
 end # module
