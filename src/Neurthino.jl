@@ -7,14 +7,22 @@ import Polynomials: Poly
 
 include("PREM.jl")
 
+struct PMNSMatrix
+    matrix::AbstractSparseMatrix{T, S} where {T <: Number, S <: Integer}
+end
+
+struct Hamlitionian
+    matrix::AbstractSparseMatrix{T, S} where {T <: Number, S <: Integer}
+end
+
 struct OscillationParameters
     dim::Integer
     mixing_angles::AbstractSparseMatrix{T, S} where {T <: Real, S <: Integer}
-    mass_::AbstractSparseMatrix{T, S} where {T <: Real, S <: Integer}
+    mass_squared_diff::AbstractSparseMatrix{T, S} where {T <: Real, S <: Integer}
     cp_phases::AbstractSparseMatrix{T, S} where {T <: Real, S <: Integer}
 end
 
-function generate_ordered_index_pairs(n::Integer)
+function _generate_ordered_index_pairs(n::Integer)
     number_of_angles = number_mixing_angles(n)
     indices = Vector{Pair{Int64,Int64}}(undef, number_of_angles)
     a = 1
@@ -27,9 +35,9 @@ function generate_ordered_index_pairs(n::Integer)
     indices
 end
 
-function make_pmns_matrix(osc_params::OscillationParameters)
+function PMNSMatrix(osc_params::OscillationParameters)
     pmns = sparse(1.0I, osc_params.dim, osc_params.dim) 
-    indices = generate_ordered_index_pairs(osc_params.dim)
+    indices = _generate_ordered_index_pairs(osc_params.dim)
     for (i, j) in indices
         rot = sparse(1.0I, osc_params.dim, osc_params.dim) 
         mixing_angle = osc_params.mixing_angles[i, j]
@@ -46,8 +54,22 @@ function make_pmns_matrix(osc_params::OscillationParameters)
         end
         pmns = rot * pmns 
     end
-    pmns
+    PMNSMatrix(pmns)
 end
+
+function Hamiltonian(osc_params::OscillationParameters)
+    H = spzeros(osc_params.dim, osc_params)
+    for (i, j, v) in zip(findnz(osc_params.mass_squared_diff)...)
+        if i < j
+            H[i, i] += v
+        elseif j < i
+            H[i, i] -= v
+        end
+    end
+    H /= osc_params.dim
+    Hamiltonian(H)
+end
+
 
 """
     transition_probability(U::AbstractArray{T, 2}, H::AbstractVector{S, 1}, L::R)
@@ -60,7 +82,7 @@ Calculate the transistion probability between two neutrino flavours
 - `L::R`:                   Baseline
 
 """
-function transition_probability(U::AbstractArray{T, 2}, H::AbstractVector{S}, L::R) where {T <: Number, S <: Real, R <: Real} 
+function transition_probability(U::PMNSMatrix, H::AbstractVector{S}, baseline::R) where {T <: Number, S <: Real, R <: Real} 
     H_diag = Diagonal(H)
     A = adjoint(U) * exp(-1im * H_diag * L) * U
     P = A * adjoint(A) 
