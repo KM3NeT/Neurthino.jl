@@ -47,7 +47,7 @@ coverage:
     - julia --color=yes -e 'using Pkg; Pkg.add("Coverage");
                 import Neurthino; cd(joinpath(dirname(pathof(Neurthino)), ".."));
                 using Coverage; cl, tl = get_summary(process_folder());
-                println("COVERAGE: ", cl/tl*100, "%")'
+                println("COVERAGE:", cl/tl*100, "%")'
     - ls -al "$CI_PROJECT_DIR/.julia"
   coverage: '/COVERAGE:\s*([0-9]*\.[0-9]*%)/'
   artifacts:
