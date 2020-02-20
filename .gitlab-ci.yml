@@ -1,58 +1,50 @@
 variables:
     JULIA_DEPOT_PATH: "$CI_PROJECT_DIR/.julia"
+    
+.test_template: &test_definition
+  script:
+    - mkdir -p "$CI_PROJECT_DIR/.julia" && ls -al "$CI_PROJECT_DIR/.julia"
+    - julia -e 'using Pkg; Pkg.clone(pwd()); Pkg.build("Neurthino"); Pkg.test("Neurthino"; coverage = true)'
+    - julia -e 'using Pkg; Pkg.add("Coverage"); 
+      import Neurthino; cd(joinpath(dirname(pathof(Neurthino)), ".."));
+      using Coverage; cl, tl = get_summary(process_folder());
+      println("(", cl/tl*100, "%) covered")'
+    - ls -al "$CI_PROJECT_DIR/.julia"
 
 cache:
   paths:
     - "$CI_PROJECT_DIR/.julia"
   key: "$CI_COMMIT_REF_SLUG"
 
-stages:
-    - test
-    - coverage
-
-.test_template: &test_definition
-  script:
-    - mkdir -p "$CI_PROJECT_DIR/.julia" && ls -al "$CI_PROJECT_DIR/.julia"
-    - julia --color=yes -e 'using Pkg; Pkg.clone(pwd()); Pkg.build("Neurthino"); Pkg.test("Neurthino"; coverage = true)'
-    - julia --color=yes -e 'using Pkg; Pkg.add("Coverage");
-                import Neurthino; cd(joinpath(dirname(pathof(Neurthino)), ".."));
-                using Coverage; cl, tl = get_summary(process_folder());
-                println("(", cl/tl*100, "%) covered")'
-    - ls -al "$CI_PROJECT_DIR/.julia"
-
 test:julia-1.0:
-  image: docker.km3net.de/base/julia:1.0
-  stage: test
+  image: julia:1.0
   <<: *test_definition
 
 test:julia-1.1:
-  image: docker.km3net.de/base/julia:1.1
-  stage: test
+  image: julia:1.1
   <<: *test_definition
 
 test:julia-1.2:
-  image: docker.km3net.de/base/julia:1.2
-  stage: test
+  image: julia:1.2
   <<: *test_definition
 
-# test:julia-1.3:
-#   image: docker.km3net.de/base/julia:1.3
-#   <<: *test_definition
+test:julia-1.3:
+  image: julia:1.3
+  <<: *test_definition
 
-coverage:
-  image: docker.km3net.de/base/julia:1.2
-  stage: coverage
+pages:
+  image: julia:1.3
+  stage: deploy
   script:
-    - mkdir -p "$CI_PROJECT_DIR/.julia" && ls -al "$CI_PROJECT_DIR/.julia"
-    - julia --color=yes -e 'using Pkg; Pkg.add("Coverage");
-                import Neurthino; cd(joinpath(dirname(pathof(Neurthino)), ".."));
-                using Coverage; cl, tl = get_summary(process_folder());
-                println("COVERAGE:", cl/tl*100, "%")'
-    - ls -al "$CI_PROJECT_DIR/.julia"
-  coverage: '/COVERAGE:\s*([0-9]*\.[0-9]*%)/'
+    - julia --project=docs -e '
+          using Pkg;
+          Pkg.develop(PackageSpec(path=pwd()));
+          Pkg.instantiate();
+          include("docs/make.jl");'
+    - mkdir -p public
+    - mv docs/build public/dev
   artifacts:
-      paths:
-          - reports/coverage
-
-
-
+    paths:
+      - public
+  only:
+    - master
