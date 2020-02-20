@@ -1,7 +1,7 @@
-using Documenter, KM3io
+using Documenter, Neurthino
 
 makedocs(;
-    modules=[KM3io],
+    modules=[Neurthino],
     format=Documenter.HTML(),
     pages=[
         "Home" => "index.md",
