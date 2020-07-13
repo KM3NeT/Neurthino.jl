@@ -6,9 +6,15 @@
 
 # Neurthino.jl
 
-```@index
-```
+**The package is currently under development**
 
-```@autodocs
-Modules = [Neurthino]
-```
+**Neurthino.jl** is a package for calculating neutrino oscillation probabilities.
+The main focus of the package lies on atmospheric neutrino flux and the neutrino
+propagation through earth.
+
+<!-- ```@index -->
+<!-- ``` -->
+<!--  -->
+<!-- ```@autodocs -->
+<!-- Modules = [Neurthino] -->
+<!-- ``` -->
