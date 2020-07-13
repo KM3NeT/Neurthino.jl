@@ -11,6 +11,14 @@ struct OscillationParameters
     mixing_angles::AbstractSparseMatrix{T, S} where {T <: Real, S <: Integer}
     mass_squared_diff::AbstractSparseMatrix{T, S} where {T <: Real, S <: Integer}
     cp_phases::AbstractSparseMatrix{T, S} where {T <: Real, S <: Integer}
+    OscillationParameters(dim::Integer) = begin
+        no_cp_phases = number_cp_phases(dim)
+        no_mixing_angles = number_mixing_angles(dim)
+        new(dim,
+            spzeros(no_mixing_angles, no_mixing_angles),
+            spzeros(no_mixing_angles, no_mixing_angles),
+            spzeros(no_cp_phases, no_cp_phases))
+    end
 end
 
 function _generate_ordered_index_pairs(n::Integer)
