@@ -1,23 +1,14 @@
-struct PMNSMatrix
-    matrix::AbstractSparseMatrix{T, S} where {T <: Number, S <: Integer}
-end
-
-struct Hamiltionian
-    matrix::AbstractSparseMatrix{T, S} where {T <: Number, S <: Integer}
-end
-
 struct OscillationParameters
     dim::Integer
-    mixing_angles::AbstractSparseMatrix{T, S} where {T <: Real, S <: Integer}
-    mass_squared_diff::AbstractSparseMatrix{T, S} where {T <: Real, S <: Integer}
-    cp_phases::AbstractSparseMatrix{T, S} where {T <: Real, S <: Integer}
+    mixing_angles::UnitUpperTriangular{T, <:AbstractSparseMatrix{T,S}} where {T <: Real, S<:Integer}
+    mass_squared_diff::UnitUpperTriangular{T, <: AbstractSparseMatrix{T,S}} where {T <: Real, S <: Integer}
+    cp_phases::UnitUpperTriangular{T, <: AbstractSparseMatrix{T,S}} where {T <: Real, S <: Integer}
+
     OscillationParameters(dim::Integer) = begin
-        no_cp_phases = number_cp_phases(dim)
-        no_mixing_angles = number_mixing_angles(dim)
-        new(dim,
-            spzeros(no_mixing_angles, no_mixing_angles),
-            spzeros(no_mixing_angles, no_mixing_angles),
-            spzeros(no_cp_phases, no_cp_phases))
+            new(dim,
+                UnitUpperTriangular(spzeros(dim, dim)),
+                UnitUpperTriangular(spzeros(dim, dim)),
+                UnitUpperTriangular(spzeros(dim, dim)))
     end
 end
 
@@ -38,14 +29,14 @@ function PMNSMatrix(osc_params::OscillationParameters)
     pmns = sparse(1.0I, osc_params.dim, osc_params.dim) 
     indices = _generate_ordered_index_pairs(osc_params.dim)
     for (i, j) in indices
-        rot = sparse(1.0I, osc_params.dim, osc_params.dim) 
+        rot = sparse((1.0+0im)I, osc_params.dim, osc_params.dim) 
         mixing_angle = osc_params.mixing_angles[i, j]
         c, s = cos(mixing_angle), sin(mixing_angle)
         rot[i, i] = c
         rot[j, j] = c
         rot[i, j] = s
         rot[j, i] = -s
-        if CartesianIndex(i, j) in osc_params.cp_phases
+        if CartesianIndex(i, j) in findall(!iszero, osc_params.cp_phases)
             cp_phase = osc_params.cp_phases[i, j]
             cp_term = exp(-1im * cp_phase)
             rot[i, j] *= cp_term
@@ -53,27 +44,29 @@ function PMNSMatrix(osc_params::OscillationParameters)
         end
         pmns = rot * pmns 
     end
-    PMNSMatrix(pmns)
+    pmns
 end
 
 function Hamiltonian(osc_params::OscillationParameters)
-    H = spzeros(osc_params.dim, osc_params)
-    for (i, j, v) in zip(findnz(osc_params.mass_squared_diff)...)
-        if i < j
-            H[i, i] += v
-        elseif j < i
-            H[i, i] -= v
+    H = spzeros(osc_params.dim)
+    for i in 1:osc_params.dim
+        for j in 1:osc_params.dim
+            if i < j
+                H[i] += osc_params.mass_squared_diff[i,j]
+            elseif j < i
+                H[i] -= osc_params.mass_squared_diff[j,i]
+            end
         end
     end
     H /= osc_params.dim
-    Hamiltonian(H)
+    H
 end
 
 
 """
     transition_probability(U::AbstractArray{T, 2}, H::AbstractVector{S, 1}, L::R)
 
-Calculate the transistion probability between two neutrino flavours
+Calculate the transistion probability between the neutrino flavours
 
 # Arguments
 - `U::AbstractArray{T, 2}`: Unitary transistion matrix
@@ -81,10 +74,10 @@ Calculate the transistion probability between two neutrino flavours
 - `L::R`:                   Baseline
 
 """
-function transition_probability(U::PMNSMatrix, H::AbstractVector{S}, baseline::R) where {T <: Number, S <: Real, R <: Real} 
-    H_diag = Diagonal(H)
-    A = adjoint(U) * exp(-1im * H_diag * L) * U
-    P = A * adjoint(A) 
+function transition_probability(U::AbstractSparseMatrix{T}, H::AbstractVector{S}, energy::S, baseline::S) where {T <: Number, S <: Real} 
+    H_diag = 2.534 * Diagonal(H) * baseline / energy
+    A = U * exp(-1im * H_diag) * adjoint(U)
+    P = abs.(A) .^ 2
 end
 
 """
