@@ -26,6 +26,15 @@ function _generate_ordered_index_pairs(n::Integer)
 end
 
 function PMNSMatrix(osc_params::OscillationParameters)
+"""
+    PMNSMatrix(osc_params::OscillationParameters)
+
+Create rotation matrix (PMNS) based on the given oscillation parameters
+
+# Arguments
+- `osc_params::OscillationParameters`: Oscillation parameters
+
+"""
     pmns = sparse(1.0I, osc_params.dim, osc_params.dim) 
     indices = _generate_ordered_index_pairs(osc_params.dim)
     for (i, j) in indices
@@ -48,6 +57,16 @@ function PMNSMatrix(osc_params::OscillationParameters)
 end
 
 function Hamiltonian(osc_params::OscillationParameters)
+"""
+    Hamiltonian(osc_params::OscillationParameters)
+
+Create modified hamiltonian matrix consisting of the squared mass differences
+based on the given oscillation parameters
+
+# Arguments
+- `osc_params::OscillationParameters`: Oscillation parameters
+
+"""
     H = spzeros(osc_params.dim)
     for i in 1:osc_params.dim
         for j in 1:osc_params.dim
