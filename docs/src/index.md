@@ -1,7 +1,8 @@
 ![](https://github.com/KM3NeT/Neurthino.jl/raw/master/docs/src/assets/neurthino.png)
 
-[![pipeline status](https://git.km3net.de/tgal/Neurthino.jl/badges/master/pipeline.svg)](https://git.km3net.de/tgal/Neurthino.jl/commits/master)
-[![coverage report](https://git.km3net.de/tgal/Neurthino.jl/badges/master/coverage.svg)](https://git.km3net.de/tgal/Neurthino.jl/commits/master)
+[![Build Status](https://travis-ci.com/KM3NeT/Neurthino.jl.svg?branch=master)](https://travis-ci.com/KM3NeT/Neurthino.jl)
+[![Codecov](https://codecov.io/gh/KM3NeT/Neurthino.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/KM3NeT/Neurthino.jl)
+
 
 
 # Neurthino.jl
