@@ -1,14 +1,14 @@
 struct OscillationParameters
     dim::Integer
-    mixing_angles::UnitUpperTriangular{T, <:AbstractSparseMatrix{T,S}} where {T <: Real, S<:Integer}
-    mass_squared_diff::UnitUpperTriangular{T, <: AbstractSparseMatrix{T,S}} where {T <: Real, S <: Integer}
-    cp_phases::UnitUpperTriangular{T, <: AbstractSparseMatrix{T,S}} where {T <: Real, S <: Integer}
+    mixing_angles::UnitUpperTriangular{T, <: AbstractMatrix{T}} where {T <: Real}
+    mass_squared_diff::UnitUpperTriangular{T, <: AbstractMatrix{T}} where {T <: Real}
+    cp_phases::UnitUpperTriangular{T, <: AbstractMatrix{T}} where {T <: Real}
 
     OscillationParameters(dim::Integer) = begin
             new(dim,
-                UnitUpperTriangular(spzeros(dim, dim)),
-                UnitUpperTriangular(spzeros(dim, dim)),
-                UnitUpperTriangular(spzeros(dim, dim)))
+                UnitUpperTriangular(zeros(Float64, (dim, dim))),
+                UnitUpperTriangular(zeros(Float64, (dim, dim))),
+                UnitUpperTriangular(zeros(Float64, (dim, dim))))
     end
 end
 
@@ -25,6 +25,30 @@ function _generate_ordered_index_pairs(n::Integer)
     indices
 end
 
+"""
+    MatterOscillationMatrices(osc_params::OscillationParameters, matter_density)
+
+Create modified oscillation parameters for neutrino propagation through matter
+
+# Arguments
+- `osc_vacuum::OscillationParameters`: Oscillation parameters in vacuum
+- `matter_density`: Matter density in g*cm^-3 
+
+"""
+function MatterOscillationMatrices(osc_vacuum::OscillationParameters, matter_density)
+    osc_matter = OscillationParameters(osc_vacuum.dim)
+    H_vacuum = Diagonal(Hamiltonian(osc_vacuum)) 
+    U_vacuum = PMNSMatrix(osc_vacuum)
+    H_flavour = U_vacuum * H_vacuum  * adjoint(U_vacuum)
+    A = 2 * sqrt(2) * ustrip(G_F) * ustrip(PhysicalConstants.CODATA2018.AvogadroConstant) * 1e9
+    A *= electron_density
+    H_flavour[1,1] += A
+    U_matter = eigvecs(H_flavour)
+    H_matter = eigvals(H_flavour)
+    return H_matter, U_matter
+end
+
+
 function PMNSMatrix(osc_params::OscillationParameters)
 """
     PMNSMatrix(osc_params::OscillationParameters)
@@ -35,7 +59,7 @@ Create rotation matrix (PMNS) based on the given oscillation parameters
 - `osc_params::OscillationParameters`: Oscillation parameters
 
 """
-    pmns = sparse(1.0I, osc_params.dim, osc_params.dim) 
+    pmns = Matrix{Complex}(1.0I, osc_params.dim, osc_params.dim) 
     indices = _generate_ordered_index_pairs(osc_params.dim)
     for (i, j) in indices
         rot = sparse((1.0+0im)I, osc_params.dim, osc_params.dim) 
@@ -93,8 +117,8 @@ Calculate the transistion probability between the neutrino flavours
 - `L::R`:                   Baseline
 
 """
-function transition_probability(U::AbstractSparseMatrix{T}, H::AbstractVector{S}, energy::S, baseline::S) where {T <: Number, S <: Real} 
-    H_diag = 2.534 * Diagonal(H) * baseline / energy
+function transition_probability(U, H, energy, baseline)  
+    H_diag = 2.534 * Diagonal(H) * baseline / energy 
     A = U * exp(-1im * H_diag) * adjoint(U)
     P = abs.(A) .^ 2
 end
