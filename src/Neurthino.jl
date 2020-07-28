@@ -5,7 +5,7 @@ using SparseArrays
 using PhysicalConstants
 using Unitful
 
-import Polynomials: Poly
+using Polynomials
 
 # TEMPORARY UNTIL PhysicalConstants.jl GETS UPDATED
 G_F = 1.1663787e-5u"GeV^-2"
