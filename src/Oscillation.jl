@@ -41,8 +41,8 @@ function MatterOscillationMatrices(osc_vacuum::OscillationParameters, matter_den
     U_vacuum = PMNSMatrix(osc_vacuum)
     H_flavour = U_vacuum * H_vacuum  * adjoint(U_vacuum)
     A = 2 * sqrt(2) * ustrip(G_F) * ustrip(PhysicalConstants.CODATA2018.AvogadroConstant) * 1e9
-    A *= electron_density
-    H_flavour[1,1] += A
+    A *= matter_density
+    H_flavour[1,1] += A  # assuming electron at 1,1
     U_matter = eigvecs(H_flavour)
     H_matter = eigvals(H_flavour)
     return H_matter, U_matter
