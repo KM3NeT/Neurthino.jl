@@ -36,18 +36,31 @@ Create modified oscillation parameters for neutrino propagation through matter
 
 """
 function MatterOscillationMatrices(osc_vacuum::OscillationParameters, matter_density)
-    osc_matter = OscillationParameters(osc_vacuum.dim)
     H_vacuum = Diagonal(Hamiltonian(osc_vacuum)) 
     U_vacuum = PMNSMatrix(osc_vacuum)
-    H_flavour = U_vacuum * H_vacuum  * adjoint(U_vacuum)
+    return MatterOscillationMatrices(H_vacuum, U_vacuum, matter_density)
+end
+
+"""
+    MatterOscillationMatrices(U_vac, H_vac, matter_density)
+
+Create modified oscillation parameters for neutrino propagation through matter
+
+# Arguments
+- `U_vac`: Vacuum PMNSMatrix
+- `H_vac`: Vacuum Hamiltonian
+- `matter_density`: Matter density in g*cm^-3 
+
+"""
+function MatterOscillationMatrices(U_vac, H_vac, matter_density)
+    H_flavour = U_vac * H_vac  * adjoint(U_vac)
     A = 2 * sqrt(2) * ustrip(G_F) * ustrip(PhysicalConstants.CODATA2018.AvogadroConstant) * 1e9
     A *= matter_density
-    H_flavour[1,1] += A  # assuming electron at 1,1
+    H_flavour[1,1] += A  
     U_matter = eigvecs(H_flavour)
     H_matter = eigvals(H_flavour)
     return H_matter, U_matter
 end
-
 
 function PMNSMatrix(osc_params::OscillationParameters)
 """
@@ -107,7 +120,7 @@ end
 
 
 """
-    transition_probability(U::AbstractArray{T, 2}, H::AbstractVector{S, 1}, L::R)
+    transprob(U::AbstractArray{T, 2}, H::AbstractVector{S, 1}, L::R)
 
 Calculate the transistion probability between the neutrino flavours
 
@@ -117,7 +130,7 @@ Calculate the transistion probability between the neutrino flavours
 - `L::R`:                   Baseline
 
 """
-function transition_probability(U, H, energy, baseline)  
+function transprob(U, H, energy, baseline)  
     H_diag = 2.534 * Diagonal(H) * baseline / energy 
     A = U * exp(-1im * H_diag) * adjoint(U)
     P = abs.(A) .^ 2
