@@ -7,7 +7,7 @@ using Unitful
 using Polynomials
 
 import Base
-export transprob, OscillationParameters, PMNSMatrix, Hamiltonian
+export transprob, OscillationParameters, PMNSMatrix, Hamiltonian, MatterOscillationMatrices
 
 # TEMPORARY UNTIL PhysicalConstants.jl GETS UPDATED
 G_F = 1.1663787e-5u"GeV^-2"

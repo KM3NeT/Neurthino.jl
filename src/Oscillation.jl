@@ -53,7 +53,7 @@ Create modified oscillation parameters for neutrino propagation through matter
 
 """
 function MatterOscillationMatrices(U_vac, H_vac, matter_density)
-    H_flavour = U_vac * H_vac  * adjoint(U_vac)
+    H_flavour = U_vac * Diagonal(H_vac) * adjoint(U_vac)
     A = 2 * sqrt(2) * ustrip(G_F) * ustrip(PhysicalConstants.CODATA2018.AvogadroConstant) * 1e9
     A *= matter_density
     H_flavour[1,1] += A  
@@ -120,17 +120,37 @@ end
 
 
 """
-    transprob(U::AbstractArray{T, 2}, H::AbstractVector{S, 1}, L::R)
+    transprob(U, H, energy, baseline)
 
 Calculate the transistion probability between the neutrino flavours
 
 # Arguments
-- `U::AbstractArray{T, 2}`: Unitary transistion matrix
-- `H::AbstractVector{S}`:   Energy eigenvalues
-- `L::R`:                   Baseline
+- `U`:          Unitary transition matrix
+- `H`:          Energy eigenvalues
+- `energy`:     Baseline [km]
+- `baseline`:   Energy [GeV]
 
 """
 function transprob(U, H, energy, baseline)  
+    H_diag = 2.534 * Diagonal(H) * baseline / energy 
+    A = U * exp(-1im * H_diag) * adjoint(U)
+    P = abs.(A) .^ 2
+end
+
+"""
+    transprob(osc_params::OscillationParameters, energy, baseline)
+
+Calculate the transistion probability between the neutrino flavours
+
+# Arguments
+- `osc_params::OscillationParameters`:  Oscillation parameters
+- `energy`:                             Baseline [km]
+- `baseline`:                           Energy [GeV]
+
+"""
+function transprob(osc_params::OscillationParameters, energy, baseline)  
+    H = Hamiltonian(osc_params)
+    U = PMNSMatrix(osc_params)
     H_diag = 2.534 * Diagonal(H) * baseline / energy 
     A = U * exp(-1im * H_diag) * adjoint(U)
     P = abs.(A) .^ 2
