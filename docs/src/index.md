@@ -32,8 +32,8 @@ julia> osc.mixing_angles[2,3] = 0.84;
 
 julia> osc.cp_phases[1,3] = 3.86;
 ```
-The mass squared differences are defined as $`\Delta_{ij} = m_i^2 - m_j^2`$ and 
-within the package the convention $`\forall i<j : m_i < m_j`$ is kept. 
+The mass squared differences are defined as ![equation](http://latex.codecogs.com/gif.latex?\Delta_{ij} = m_i^2 - m_j^2) and 
+within the package the convention ![equation](http://latex.codecogs.com/gif.latex?\forall i<j : m_i < m_j) is kept. 
 ```
 julia> osc.mass_squared_diff[1,3] = -2.523e-3;
 
