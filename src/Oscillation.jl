@@ -104,7 +104,22 @@ based on the given oscillation parameters
 - `osc_params::OscillationParameters`: Oscillation parameters
 
 """
-    H = spzeros(osc_params.dim)
+    Hamiltonian(osc_params, zeros(Float64, osc_params.dim))
+end 
+
+function Hamiltonian(osc_params::OscillationParameters, lambda)
+"""
+    Hamiltonian(osc_params::OscillationParameters)
+
+Create modified hamiltonian matrix consisting of the squared mass differences
+based on the given oscillation parameters
+
+# Arguments
+- `osc_params::OscillationParameters`:  Oscillation parameters
+- `lambda`:                             Decay parameters for each mass eigenstate
+
+"""
+    H = zeros(Complex, osc_params.dim)
     for i in 1:osc_params.dim
         for j in 1:osc_params.dim
             if i < j
@@ -113,6 +128,7 @@ based on the given oscillation parameters
                 H[i] -= osc_params.mass_squared_diff[j,i]
             end
         end
+        H[i] += 1im * lambda[i]
     end
     H /= osc_params.dim
     H
