@@ -53,7 +53,7 @@ Create modified oscillation parameters for neutrino propagation through matter
 
 """
 function MatterOscillationMatrices(U_vac, H_vac, matter_density)
-    H_flavour = U_vac * Diagonal(H_vac) * adjoint(U_vac)
+    H_flavour = Array{Complex}(U_vac * Diagonal(H_vac) * adjoint(U_vac))
     A = 2 * sqrt(2) * ustrip(G_F) * ustrip(PhysicalConstants.CODATA2018.AvogadroConstant) * 1e9
     A *= matter_density
     H_flavour[1,1] += A  
