@@ -13,8 +13,7 @@ struct OscillationParameters
 end
 
 function _generate_ordered_index_pairs(n::Integer)
-    number_of_angles = number_mixing_angles(n)
-    indices = Vector{Pair{Int64,Int64}}(undef, number_of_angles)
+    indices = Vector{Pair{Int64,Int64}}(undef, mixingangles(n))
     a = 1
     for i in 1:n 
         for j in 1:i-1
@@ -178,17 +177,17 @@ $(SIGNATURES)
 Returns the number of CP violating phases at given number of neutrino types
 
 # Arguments
-- `n::Unsigned`: number of neutrino types in the supposed model
+- `n`: number of neutrino types in the supposed model
 
 # Examples
 ```julia-repl
-julia> Neurthino.number_cp_phases(3)
+julia> cpphases(3)
 1
 ```
 """
-function number_cp_phases(n::T) where {T <: Integer}
+function cpphases(n)
     n < 1 && return 0
-    cp_phases = div( (n-1)*(n-2) , 2 )
+    div((n - 1) * (n - 2), 2 )
 end
 
 """
@@ -197,16 +196,15 @@ $(SIGNATURES)
 Returns the number of mixing angles at given number of neutrino types
 
 # Arguments
-- `n::Unsigned`: number of neutrino types in the supposed model
+- `n`: number of neutrino types in the supposed model
 
 # Examples
 ```julia-repl
-julia> Neurthino.number_mixing_phases(3)
+julia> mixingangles(3)
 3
 ```
 """
-function number_mixing_angles(n::T) where {T <: Integer}
+function mixingangles(n)
     n < 1 && return 0
-    mixing_angles = div( n*(n-1) , 2 )
+    div(n * (n - 1), 2)
 end
-
