@@ -187,7 +187,7 @@ julia> Neurthino.number_cp_phases(3)
 ```
 """
 function number_cp_phases(n::T) where {T <: Integer}
-    if (n < 1) return 0 end
+    n < 1 && return 0
     cp_phases = div( (n-1)*(n-2) , 2 )
 end
 
@@ -206,7 +206,7 @@ julia> Neurthino.number_mixing_phases(3)
 ```
 """
 function number_mixing_angles(n::T) where {T <: Integer}
-    if (n < 1) return 0 end
+    n < 1 && return 0
     mixing_angles = div( n*(n-1) , 2 )
 end
 
