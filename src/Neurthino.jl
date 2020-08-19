@@ -5,6 +5,7 @@ using SparseArrays
 using PhysicalConstants
 using Unitful
 using Polynomials
+using DocStringExtensions
 
 import Base
 export transprob, OscillationParameters, PMNSMatrix, Hamiltonian, MatterOscillationMatrices

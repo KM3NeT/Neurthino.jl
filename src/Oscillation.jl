@@ -26,7 +26,7 @@ function _generate_ordered_index_pairs(n::Integer)
 end
 
 """
-    MatterOscillationMatrices(osc_params::OscillationParameters, matter_density)
+$(SIGNATURES)
 
 Create modified oscillation parameters for neutrino propagation through matter
 
@@ -42,7 +42,7 @@ function MatterOscillationMatrices(osc_vacuum::OscillationParameters, matter_den
 end
 
 """
-    MatterOscillationMatrices(U_vac, H_vac, matter_density)
+$(SIGNATURES)
 
 Create modified oscillation parameters for neutrino propagation through matter
 
@@ -64,7 +64,7 @@ end
 
 function PMNSMatrix(osc_params::OscillationParameters)
 """
-    PMNSMatrix(osc_params::OscillationParameters)
+$(SIGNATURES)
 
 Create rotation matrix (PMNS) based on the given oscillation parameters
 
@@ -95,7 +95,7 @@ end
 
 function Hamiltonian(osc_params::OscillationParameters)
 """
-    Hamiltonian(osc_params::OscillationParameters)
+$(SIGNATURES)
 
 Create modified hamiltonian matrix consisting of the squared mass differences
 based on the given oscillation parameters
@@ -109,7 +109,7 @@ end
 
 function Hamiltonian(osc_params::OscillationParameters, lambda)
 """
-    Hamiltonian(osc_params::OscillationParameters)
+$(SIGNATURES)
 
 Create modified hamiltonian matrix consisting of the squared mass differences
 based on the given oscillation parameters
@@ -136,7 +136,7 @@ end
 
 
 """
-    transprob(U, H, energy, baseline)
+$(SIGNATURES)
 
 Calculate the transistion probability between the neutrino flavours
 
@@ -154,7 +154,7 @@ function transprob(U, H, energy, baseline)
 end
 
 """
-    transprob(osc_params::OscillationParameters, energy, baseline)
+$(SIGNATURES)
 
 Calculate the transistion probability between the neutrino flavours
 
@@ -173,7 +173,7 @@ function transprob(osc_params::OscillationParameters, energy, baseline)
 end
 
 """
-    number_cp_phases(n::Unsigned)
+$(SIGNATURES)
 
 Returns the number of CP violating phases at given number of neutrino types
 
@@ -192,7 +192,7 @@ function number_cp_phases(n::T) where {T <: Integer}
 end
 
 """
-    number_mixing_angles(n::Unsigned)
+$(SIGNATURES)
 
 Returns the number of mixing angles at given number of neutrino types
 
