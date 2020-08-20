@@ -1,10 +1,10 @@
 import Neurthino
 
-@test Neurthino.number_cp_phases(0) == 0
-@test Neurthino.number_cp_phases(1) == 0
-@test Neurthino.number_cp_phases(2) == 0
-@test Neurthino.number_cp_phases(3) == 1
-@test Neurthino.number_cp_phases(4) == 3
+@test Neurthino.cpphases(0) == 0
+@test Neurthino.cpphases(1) == 0
+@test Neurthino.cpphases(2) == 0
+@test Neurthino.cpphases(3) == 1
+@test Neurthino.cpphases(4) == 3
 
 osc = Neurthino.OscillationParameters(3)
 osc.mixing_angles[1,2] = 0.59
