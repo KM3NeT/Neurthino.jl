@@ -2,12 +2,14 @@ module Neurthino
 
 using LinearAlgebra
 using SparseArrays
+using StaticArrays
 using PhysicalConstants
 using Unitful
 using Polynomials
 using DocStringExtensions
 
 export transprob, OscillationParameters, PMNSMatrix, Hamiltonian, MatterOscillationMatrices
+export setmassdifference, setcpphase, setmixingangle
 
 # TEMPORARY UNTIL PhysicalConstants.jl GETS UPDATED
 G_F = 1.1663787e-5u"GeV^-2"
