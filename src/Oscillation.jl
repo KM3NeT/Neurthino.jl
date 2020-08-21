@@ -1,14 +1,13 @@
-struct OscillationParameters
-    dim::Integer
-    mixing_angles::UnitUpperTriangular{T, <: AbstractMatrix{T}} where {T <: Real}
-    mass_squared_diff::UnitUpperTriangular{T, <: AbstractMatrix{T}} where {T <: Real}
-    cp_phases::UnitUpperTriangular{T, <: AbstractMatrix{T}} where {T <: Real}
+struct OscillationParameters{T, N}
+    mixing_angles::UnitUpperTriangular{T, <:MMatrix{N, N, T}}
+    mass_squared_diff::UnitUpperTriangular{T, <:MMatrix{N, N, T}}
+    cp_phases::UnitUpperTriangular{T, <:MMatrix{N, N, T}}
 
     OscillationParameters(dim::Integer) = begin
-            new(dim,
-                UnitUpperTriangular(zeros(Float64, (dim, dim))),
-                UnitUpperTriangular(zeros(Float64, (dim, dim))),
-                UnitUpperTriangular(zeros(Float64, (dim, dim))))
+        new{Float64, dim}(
+                UnitUpperTriangular(@MMatrix zeros(dim, dim)),
+                UnitUpperTriangular(@MMatrix zeros(dim, dim)),
+                UnitUpperTriangular(@MMatrix zeros(dim, dim)))
     end
 end
 
@@ -71,10 +70,11 @@ Create rotation matrix (PMNS) based on the given oscillation parameters
 - `osc_params::OscillationParameters`: Oscillation parameters
 
 """
-    pmns = Matrix{Complex}(1.0I, osc_params.dim, osc_params.dim) 
-    indices = _generate_ordered_index_pairs(osc_params.dim)
+    dim = size(osc_params.mixing_angles)[1]
+    pmns = Matrix{Complex}(1.0I, dim, dim) 
+    indices = _generate_ordered_index_pairs(dim)
     for (i, j) in indices
-        rot = sparse((1.0+0im)I, osc_params.dim, osc_params.dim) 
+        rot = sparse((1.0+0im)I, dim, dim) 
         mixing_angle = osc_params.mixing_angles[i, j]
         c, s = cos(mixing_angle), sin(mixing_angle)
         rot[i, i] = c
@@ -103,7 +103,8 @@ based on the given oscillation parameters
 - `osc_params::OscillationParameters`: Oscillation parameters
 
 """
-    Hamiltonian(osc_params, zeros(Float64, osc_params.dim))
+    dim = size(osc_params.mixing_angles)[1]
+    Hamiltonian(osc_params, zeros(Float64, dim))
 end 
 
 function Hamiltonian(osc_params::OscillationParameters, lambda)
@@ -118,9 +119,10 @@ based on the given oscillation parameters
 - `lambda`:                             Decay parameters for each mass eigenstate
 
 """
-    H = zeros(Complex, osc_params.dim)
-    for i in 1:osc_params.dim
-        for j in 1:osc_params.dim
+    dim = size(osc_params.mixing_angles)[1]
+    H = zeros(Complex, dim)
+    for i in 1:dim
+        for j in 1:dim
             if i < j
                 H[i] += osc_params.mass_squared_diff[i,j]
             elseif j < i
@@ -129,8 +131,7 @@ based on the given oscillation parameters
         end
         H[i] += 1im * lambda[i]
     end
-    H /= osc_params.dim
-    H
+    H /= dim
 end
 
 
