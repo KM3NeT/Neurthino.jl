@@ -24,6 +24,10 @@ test_values = Neurthino.transprob(U, H, 1, 1.6e4)
 @test test_values[2,3] ≈ 0.233 atol=0.01 
 @test test_values[3,3] ≈ 0.565 atol=0.01 
 
+Neurthino.masssquareddiff!(osc, (3,1), 2.523e-3)
+Neurthino.masssquareddiff!(osc, (3,2), 2.523e-3)
+Neurthino.masssquareddiff!(osc, (2,1), 7.39e-5)
+
 test_values = Neurthino.transprob(osc, 1, 1.6e4)
 @test test_values[1,1] ≈ 0.360 atol=0.01 
 @test test_values[1,2] ≈ 0.437 atol=0.01 
