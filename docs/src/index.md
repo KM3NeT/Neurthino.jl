@@ -25,22 +25,22 @@ julia> osc = OscillationParameters(3);
 The values of the mixing angles, mass squared differences and CP phases are 
 initialised to 0 and have to be set individually.
 ```
-julia> osc.mixing_angles[1,2] = 0.59;
+julia> mixingangle!(osc, (1,2), 0.59);
 
-julia> osc.mixing_angles[1,3] = 0.15;
+julia> mixingangle!(osc, (1,3), 0.15);
 
-julia> osc.mixing_angles[2,3] = 0.84;
+julia> mixingangle!(osc, (2,3), 0.84);
 
-julia> osc.cp_phases[1,3] = 3.86;
+julia> cpphase!(osc, (1,3), 3.86);
 ```
 The mass squared differences are defined as <img src="https://render.githubusercontent.com/render/math?math=\Delta_{ij}=m_i^2-m_j^2"> and
 within the package the convention <img src="https://render.githubusercontent.com/render/math?math=\forall%20i%3Cj:m_i%3Cm_j"> is kept.
 ```
-julia> osc.mass_squared_diff[1,3] = -2.523e-3;
+julia> masssquareddiff!(osc, (1,3), -2.523e-3);
 
-julia> osc.mass_squared_diff[2,3] = -2.523e-3;
+julia> masssquareddiff!(osc, (2,3), -2.523e-3);
 
-julia> osc.mass_squared_diff[1,2] = -7.39e-5;
+julia> masssquareddiff(osc, (1,2), -7.39e-5);
 ```
 These oscillation parameters can now be used in order to calculate the transition
 probabilities between the flavour states. 

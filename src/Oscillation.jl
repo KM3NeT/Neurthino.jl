@@ -26,6 +26,63 @@ end
 """
 $(SIGNATURES)
 
+Set a mixing angle of an oscillation parameters struct
+
+# Arguments
+- `osc::OscillationParameters`: Oscillation parameters 
+- `indices::Tuple{<:Integer, <:Integer}`: The indices of the mixing angle
+- `value` The value which should be applied to the oscillation parameters
+
+"""
+function mixingangle!(osc::OscillationParameters, indices::Tuple{T, T}, value) where {T <: Integer}
+    if indices[1] < indices[2]
+        osc.mixing_angles[indices[1], indices[2]] = value
+    else
+        osc.mixing_angles[indices[2], indices[1]] = value
+    end
+end
+
+"""
+$(SIGNATURES)
+
+Set a mass squared difference of an oscillation parameters struct
+
+# Arguments
+- `osc::OscillationParameters`: Oscillation parameters 
+- `indices::Tuple{<:Integer, <:Integer}`: The indices of the mass squared difference
+- `value` The value which should be applied to the oscillation parameters
+
+"""
+function masssquareddiff!(osc::OscillationParameters, indices::Tuple{T, T}, value) where {T <: Integer}
+    if indices[1] < indices[2]
+        osc.mass_squared_diff[indices[1], indices[2]] = value
+    else
+        osc.mass_squared_diff[indices[2], indices[1]] = -value
+    end
+end
+
+"""
+$(SIGNATURES)
+
+Set a CP phase of an oscillation parameters struct
+
+# Arguments
+- `osc::OscillationParameters`: Oscillation parameters 
+- `indices::Tuple{<:Integer, <:Integer}`: The indices of the mass difference
+- `value` The value which should be applied to the oscillation parameters
+
+"""
+function cpphase!(osc::OscillationParameters, indices::Tuple{T, T}, value) where {T <: Integer}
+    if indices[1] < indices[2]
+        osc.cp_phases[indices[1], indices[2]] = value
+    else
+        osc.cp_phases[indices[2], indices[1]] = value
+    end
+end
+
+"""
+$(SIGNATURES)
+
 Create modified oscillation parameters for neutrino propagation through matter
 
 # Arguments
