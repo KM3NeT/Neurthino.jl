@@ -40,7 +40,7 @@ julia> masssquareddiff!(osc, (1,3), -2.523e-3);
 
 julia> masssquareddiff!(osc, (2,3), -2.523e-3);
 
-julia> masssquareddiff(osc, (1,2), -7.39e-5);
+julia> masssquareddiff!(osc, (1,2), -7.39e-5);
 ```
 These oscillation parameters can now be used in order to calculate the transition
 probabilities between the flavour states. 
