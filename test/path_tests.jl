@@ -10,5 +10,14 @@ import Neurthino
 @test Neurthino.tracklength(170u"°", 1860u"km") ≈ 10765.13u"km" atol=0.01u"km" 
 @test Neurthino.tracklength(130u"°", 5600u"km") ≈ 6839.15u"km" atol=0.01u"km" 
 
+distances, densities = Neurthino.prempath(180u"°", 1500u"m")
 
+for d in distances
+    @test distances[1] ≈ 128.69u"km" atol=0.1u"km" 
+end
 
+@test densities[1] ≈ 3.38u"g/cm^3" atol=0.1u"g/cm^3"
+@test densities[99] ≈ 3.38u"g/cm^3" atol=0.1u"g/cm^3"
+@test densities[50] ≈ 13.09u"g/cm^3" atol=0.1u"g/cm^3"
+@test densities[20] ≈ 5.38u"g/cm^3" atol=0.1u"g/cm^3"
+@test densities[80] ≈ 5.38u"g/cm^3" atol=0.1u"g/cm^3"

@@ -28,3 +28,24 @@ Total path lengths through earth from detector position
         return halfcoord + chordsection
     end
 end
+
+function prempath(zenith::Quantity, zposition::Quantity; samples=100)
+"""
+$(SIGNATURES)
+# Arguments
+- `zenith::Quantity`: Zenith angle of the path with respect to the detector frame
+- `zposition::Quantity` Distance below the surface of the Earth (positive value) 
+- `samples` The number of steps with equal distance
+"""
+    trklen = tracklength(zenith, zposition)
+    x = Array(range(0, uconvert(u"km",trklen).val, length=samples))
+    sections = (x[2:end] - x[1:end-1])
+    total_pathlen = 0.5 * (x[2:end] + x[1:end-1])
+    zprime = uconvert(u"km", EARTH_RADIUS - zposition).val
+    radii = map(x -> sqrt(zprime^2 + x^2 + 2*zprime*x*cos(zenith)), total_pathlen)
+    densities = PREM.(radii)
+    sections*u"km", densities*u"g/cm^3"
+end
+
+
+
