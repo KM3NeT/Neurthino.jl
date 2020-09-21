@@ -18,5 +18,6 @@ G_F = uconvert(u"eV*cm^3", G_F)
 
 include("PREM.jl")
 include("Oscillation.jl")
+include("Path.jl")
 
 end # module
