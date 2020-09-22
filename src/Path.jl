@@ -38,7 +38,7 @@ $(SIGNATURES)
 - `samples` The number of steps with equal distance
 """
     trklen = tracklength(zenith, zposition)
-    x = Array(range(0, uconvert(u"km",trklen).val, length=samples))
+    x = Array(range(0.0; stop=uconvert(u"km",trklen).val, length=samples))
     sections = (x[2:end] - x[1:end-1])
     total_pathlen = 0.5 * (x[2:end] + x[1:end-1])
     zprime = uconvert(u"km", EARTH_RADIUS - zposition).val
