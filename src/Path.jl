@@ -4,7 +4,7 @@ function tracklength(zenith::Quantity, zposition::Quantity)
 """
 $(SIGNATURES)
 
-Total path lengths through earth from detector position
+Total path length through earth from detector position
 
 # Arguments
 - `zenith::Quantity`: Zenith angle of the path with respect to the detector frame
