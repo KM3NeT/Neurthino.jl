@@ -1,5 +1,8 @@
 import Neurthino
 
+@test Neurthino.tracklength(0u"°", 2.0u"km") ≈ 2.0u"km" atol=0.01u"km" 
+@test Neurthino.tracklength(90u"°", 1.0u"km") ≈ 112.88u"km" atol=0.01u"km"
+
 @test Neurthino.tracklength(60u"°", Neurthino.EARTH_RADIUS / 2) ≈ 4149.99u"km" atol=0.01u"km"
 @test Neurthino.tracklength(40u"°", Neurthino.EARTH_RADIUS / 2) ≈ 3592.76u"km" atol=0.01u"km"
 @test Neurthino.tracklength(15u"°", Neurthino.EARTH_RADIUS / 2) ≈ 3240.47u"km" atol=0.01u"km"
