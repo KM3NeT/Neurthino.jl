@@ -93,7 +93,7 @@ Create modified oscillation parameters for neutrino propagation through matter
 function MatterOscillationMatrices(osc_vacuum::OscillationParameters, matter_density)
     H_vacuum = Diagonal(Hamiltonian(osc_vacuum)) 
     U_vacuum = PMNSMatrix(osc_vacuum)
-    return MatterOscillationMatrices(H_vacuum, U_vacuum, matter_density)
+    return MatterOscillationMatrices(U_vacuum, H_vacuum, matter_density)
 end
 
 """
@@ -102,18 +102,23 @@ $(SIGNATURES)
 Create modified oscillation parameters for neutrino propagation through matter
 
 # Arguments
-- `U_vac`: Vacuum PMNSMatrix
-- `H_vac`: Vacuum Hamiltonian
+- `U`: Vacuum PMNSMatrix
+- `H`: Vacuum Hamiltonian
 - `matter_density`: Matter density in g*cm^-3 
-
+- `zoa`: Proton nucleon ratio (Z/A)
+- `anti`: Is anti neutrino
 """
-function MatterOscillationMatrices(U_vac, H_vac, matter_density)
-    H_flavour = Array{Complex}(U_vac * Diagonal(H_vac) * adjoint(U_vac))
-    A = 2 * sqrt(2) * ustrip(G_F) * ustrip(PhysicalConstants.CODATA2018.AvogadroConstant) * 1e9
-    A *= matter_density
-    H_flavour[1,1] += A  
-    U_matter = eigvecs(H_flavour)
-    H_matter = eigvals(H_flavour)
+function MatterOscillationMatrices(U, H, matter_density, energy; zoa=0.5, anti=false)
+    H_eff = U * Diagonal{Complex}(H) * adjoint(U)
+    H_eff = H_eff
+    A = sqrt(2) * ustrip(G_F) * ustrip(PhysicalConstants.CODATA2018.AvogadroConstant) * zoa * matter_density
+    if anti
+        H_eff[1,1] -= A * (2 * energy * 1e9)
+    else
+        H_eff[1,1] += A * (2 * energy * 1e9)
+    end
+    U_matter = eigvecs(H_eff)
+    H_matter = eigvals(H_eff)
     return H_matter, U_matter
 end
 
@@ -189,6 +194,7 @@ based on the given oscillation parameters
         H[i] += 1im * lambda[i]
     end
     H /= dim
+    H
 end
 
 
@@ -205,7 +211,7 @@ Calculate the transistion probability between the neutrino flavours
 
 """
 function transprob(U, H, energy, baseline)  
-    H_diag = 2.534 * Diagonal(H) * baseline / energy 
+    H_diag = 2.534 * baseline .* ( energy .+ Diagonal(H) ./ ( 2 * energy ) )
     A = U * exp(-1im * H_diag) * adjoint(U)
     P = abs.(A) .^ 2
 end
