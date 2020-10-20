@@ -7,6 +7,7 @@ using PhysicalConstants
 using Unitful
 using Polynomials
 using DocStringExtensions
+using Interpolations
 
 export transprob, OscillationParameters, PMNSMatrix, Hamiltonian, MatterOscillationMatrices
 export masssquareddiff!, cpphase!, mixingangle!
@@ -19,5 +20,6 @@ G_F = uconvert(u"eV*cm^3", G_F)
 include("PREM.jl")
 include("Oscillation.jl")
 include("Path.jl")
+include("Optimization.jl")
 
 end # module
