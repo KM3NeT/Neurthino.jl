@@ -47,5 +47,25 @@ $(SIGNATURES)
     sections*u"km", densities*u"g/cm^3"
 end
 
-
-
+function mattertransprob(osc::OscillationParameters ,energy ,densities, baselines)
+"""
+$(SIGNATURES)
+# Arguments
+- `osc_params::OscillationParameters`: Oscillation parameters
+- `energy`: Neutrino energy
+- `densities`: Matter densities of the traversed path [g/cm^3]
+- `baselines`: Path section lengths [km]
+"""
+    U_vac = PMNSMatrix(osc)
+    H_vac = Hamiltonian(osc)
+    A = fill(Matrix{Complex}(1I, size(U_vac)), length(energy))
+    for n in 1:length(energy)
+        H_mat, U_mat = MatterOscillationMatrices(U_vac, H_vac, densities, energy[n])
+        for b in baselines
+            H_tmp = 2.534 * Diagonal(H_mat) * b / energy[n]
+            A[n] *= U_mat * exp(-1im * H_tmp) * adjoint(U_mat)
+        end
+    end
+    P = map(x -> abs.(x) .^ 2, A)
+    P
+end
