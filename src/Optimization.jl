@@ -1,3 +1,9 @@
+function interpolatematteroscillationmatrices(osc::OscillationParameters, densities, energies)
+    H = Hamiltonian(osc)
+    U = PMNSMatrix(osc)
+    interpolatematteroscillationmatrices(U, H, densities, energies)
+end
+
 function interpolatematteroscillationmatrices(U, H, densities, energies)
     knots = collect(Iterators.product(densities, energies))
     matrices = map(x->MatterOscillationMatrices(U, H, x...), knots)
