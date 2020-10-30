@@ -3,8 +3,6 @@ module Neurthino
 using LinearAlgebra
 using SparseArrays
 using StaticArrays
-using PhysicalConstants
-using Unitful
 using Polynomials
 using DocStringExtensions
 using Interpolations
@@ -12,10 +10,8 @@ using Interpolations
 export transprob, OscillationParameters, PMNSMatrix, Hamiltonian, MatterOscillationMatrices
 export masssquareddiff!, cpphase!, mixingangle!
 
-# TEMPORARY UNTIL PhysicalConstants.jl GETS UPDATED
-G_F = 1.1663787e-5u"GeV^-2"
-G_F = G_F * (PhysicalConstants.CODATA2018.SpeedOfLightInVacuum * PhysicalConstants.CODATA2018.ReducedPlanckConstant)^3
-G_F = uconvert(u"eV*cm^3", G_F)
+N_A = 6.022e23 #[mol^-1]
+G_F = 8.961877245622253e-38 #[eV*cm^3]
 
 include("PREM.jl")
 include("Oscillation.jl")

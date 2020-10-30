@@ -104,14 +104,15 @@ Create modified oscillation parameters for neutrino propagation through matter
 # Arguments
 - `U`: Vacuum PMNSMatrix
 - `H`: Vacuum Hamiltonian
-- `matter_density`: Matter density in g*cm^-3 
+- `matter_density`: Matter density [g*cm^-3] 
+- `energy`: Neutrino energy [GeV]
 - `zoa`: Proton nucleon ratio (Z/A)
 - `anti`: Is anti neutrino
 """
 function MatterOscillationMatrices(U, H, matter_density, energy; zoa=0.5, anti=false)
     H_eff = U * Diagonal{Complex}(H) * adjoint(U)
     H_eff = H_eff
-    A = sqrt(2) * ustrip(G_F) * ustrip(PhysicalConstants.CODATA2018.AvogadroConstant) * zoa * matter_density
+    A = sqrt(2) * G_F * N_A * zoa * matter_density
     if anti
         H_eff[1,1] -= A * (2 * energy * 1e9)
     else
