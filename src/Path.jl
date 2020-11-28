@@ -80,7 +80,7 @@ $(SIGNATURES)
 - `densities`: Matter densities of the traversed path [g/cm^3]
 - `baselines`: Path section lengths [km]
 """
-    A = fill(Matrix{Complex}(1I, size(U_vac)), length(energy))
+    A = fill(Matrix{Complex}(1I, size(U)), length(energy))
     for n in 1:length(energy)
         for (i,b) in enumerate(baselines)
             H_mat, U_mat = MatterOscillationMatrices(U, H, densities[i], energy[n])
