@@ -32,6 +32,7 @@ end
 function prempath(zenith, zposition; samples=100)
 """
 $(SIGNATURES)
+
 # Arguments
 - `zenith::Quantity`: Zenith angle of the path with respect to the detector frame [rad]
 - `zposition::Quantity` Distance below the surface of the Earth (positive value) [km]
@@ -50,6 +51,7 @@ end
 function mattertransprob(osc::OscillationParameters ,energy ,densities, baselines)
 """
 $(SIGNATURES)
+
 # Arguments
 - `osc_params::OscillationParameters`: Vacuum oscillation parameters
 - `energy`: Neutrino energy [GeV]
@@ -73,6 +75,7 @@ end
 function mattertransprob(U, H, energy, densities, baselines)
 """
 $(SIGNATURES)
+
 # Arguments
 - `U`: Vacuum PMNS Matrix
 - `H`: Vacuum Hamiltonian
