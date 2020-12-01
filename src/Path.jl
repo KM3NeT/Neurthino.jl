@@ -1,53 +1,3 @@
-const EARTH_RADIUS = 6371.0  # km
-
-function tracklength(zenith, zposition)
-"""
-$(SIGNATURES)
-
-Total path length through earth from detector position
-
-# Arguments
-- `zenith`: Zenith angle of the path with respect to the detector frame [rad]
-- `zposition` Distance below the surface of the Earth (positive value) [km]
-"""
-    if isapprox(zenith, pi)
-        return 2*EARTH_RADIUS - zposition
-    elseif isapprox(zenith, 0)
-        return zposition
-    end
-    
-    theta = pi - zenith
-    zprime = EARTH_RADIUS - zposition
-    sintheta = sin(theta)
-    costheta = cos(theta)
-    halfcoord = sqrt(EARTH_RADIUS^2 - (zprime * sintheta)^2)
-    chordsection = zprime * costheta
-    if isapprox(zenith, pi/2)
-        return halfcoord
-    else
-        return halfcoord + chordsection
-    end
-end
-
-function prempath(zenith, zposition; samples=100)
-"""
-$(SIGNATURES)
-
-# Arguments
-- `zenith::Quantity`: Zenith angle of the path with respect to the detector frame [rad]
-- `zposition::Quantity` Distance below the surface of the Earth (positive value) [km]
-- `samples` The number of steps with equal distance
-"""
-    trklen = tracklength(zenith, zposition)
-    x = Array(range(0.0; stop=trklen, length=samples))
-    sections = (x[2:end] - x[1:end-1])
-    total_pathlen = 0.5 * (x[2:end] + x[1:end-1])
-    zprime = EARTH_RADIUS - zposition
-    radii = map(x -> sqrt(zprime^2 + x^2 + 2*zprime*x*cos(zenith)), total_pathlen)
-    densities = PREM.(radii)
-    sections, densities
-end
-
 function mattertransprob(osc::OscillationParameters, energy, densities, baselines)
 """
 $(SIGNATURES)
@@ -62,6 +12,7 @@ $(SIGNATURES)
     H_vac = Hamiltonian(osc)
     mattertransprob(U_vac, H_vac, energy, densities, baselines)
 end
+
 
 function mattertransprob(U, H, energy, densities, baselines)
 """
