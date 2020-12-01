@@ -1,3 +1,10 @@
+@enum NeutrinoFlavor begin
+  Electron = 1
+  Muon = 2
+  Tau = 3
+end
+
+
 struct OscillationParameters{T, N}
     mixing_angles::UnitUpperTriangular{T, <:MMatrix{N, N, T}}
     mass_squared_diff::UnitUpperTriangular{T, <:MMatrix{N, N, T}}
@@ -30,15 +37,17 @@ Set a mixing angle of an oscillation parameters struct
 
 # Arguments
 - `osc::OscillationParameters`: Oscillation parameters 
-- `indices::Tuple{<:Integer, <:Integer}`: The indices of the mixing angle
+- `indices::Pair{<:Integer, <:Integer}`: The indices of the mixing angle
 - `value` The value which should be applied to the oscillation parameters
 
 """
-function mixingangle!(osc::OscillationParameters, indices::Tuple{T, T}, value) where {T <: Integer}
-    if indices[1] < indices[2]
-        osc.mixing_angles[indices[1], indices[2]] = value
+function mixingangle!(osc::OscillationParameters, indices::Pair{T, T}, value) where {T <: Union{Integer, NeutrinoFlavor}}
+    fromidx = Integer(indices[1])
+    toidx = Integer(indices[2])
+    if indices[fromidx] < indices[toidx]
+        osc.mixing_angles[indices[fromidx], indices[toidx]] = value
     else
-        osc.mixing_angles[indices[2], indices[1]] = value
+        osc.mixing_angles[indices[toidx], indices[fromidx]] = value
     end
 end
 
@@ -49,15 +58,17 @@ Set a mass squared difference of an oscillation parameters struct
 
 # Arguments
 - `osc::OscillationParameters`: Oscillation parameters 
-- `indices::Tuple{<:Integer, <:Integer}`: The indices of the mass squared difference
+- `indices::Pair{<:Integer, <:Integer}`: The indices of the mass squared difference
 - `value` The value which should be applied to the oscillation parameters
 
 """
-function masssquareddiff!(osc::OscillationParameters, indices::Tuple{T, T}, value) where {T <: Integer}
-    if indices[1] < indices[2]
-        osc.mass_squared_diff[indices[1], indices[2]] = value
+function masssquareddiff!(osc::OscillationParameters, indices::Pair{T, T}, value) where {T <: Union{Integer, NeutrinoFlavor}}
+    fromidx = Integer(indices[1])
+    toidx = Integer(indices[2])
+    if indices[fromidx] < indices[toidx]
+        osc.mass_squared_diff[indices[fromidx], indices[toidx]] = value
     else
-        osc.mass_squared_diff[indices[2], indices[1]] = -value
+        osc.mass_squared_diff[indices[toidx], indices[fromidx]] = -value
     end
 end
 
@@ -68,15 +79,17 @@ Set a CP phase of an oscillation parameters struct
 
 # Arguments
 - `osc::OscillationParameters`: Oscillation parameters 
-- `indices::Tuple{<:Integer, <:Integer}`: The indices of the mass difference
+- `indices::Pair{<:Integer, <:Integer}`: The indices of the mass difference
 - `value` The value which should be applied to the oscillation parameters
 
 """
-function cpphase!(osc::OscillationParameters, indices::Tuple{T, T}, value) where {T <: Integer}
-    if indices[1] < indices[2]
-        osc.cp_phases[indices[1], indices[2]] = value
+function cpphase!(osc::OscillationParameters, indices::Pair{T, T}, value) where {T <: Union{Integer, NeutrinoFlavor}}
+    fromidx = Integer(indices[1])
+    toidx = Integer(indices[2])
+    if indices[fromidx] < indices[toidx]
+        osc.cp_phases[indices[fromidx], indices[toidx]] = value
     else
-        osc.cp_phases[indices[2], indices[1]] = value
+        osc.cp_phases[indices[toidx], indices[fromidx]] = value
     end
 end
 
