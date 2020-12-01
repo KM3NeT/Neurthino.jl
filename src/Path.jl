@@ -1,4 +1,4 @@
-EARTH_RADIUS = 6371.0
+const EARTH_RADIUS = 6371.0  # m
 
 function tracklength(zenith, zposition)
 """
