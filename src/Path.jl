@@ -48,7 +48,7 @@ $(SIGNATURES)
     sections, densities
 end
 
-function mattertransprob(osc::OscillationParameters ,energy ,densities, baselines)
+function mattertransprob(osc::OscillationParameters, energy, densities, baselines)
 """
 $(SIGNATURES)
 
