@@ -10,13 +10,13 @@ using ProgressMeter
 function main()
     println("Initialising oscillation parameters")
     osc = OscillationParameters(3);
-    mixingangle!(osc, Electron => Muon, 0.58);
-    mixingangle!(osc, Electron => Tau, 0.15);
-    mixingangle!(osc, Muon => Tau, 0.737);
-    cpphase!(osc, Electron => Tau, 5.34);
-    masssquareddiff!(osc, Muon => Tau, -2.457e-3);
-    masssquareddiff!(osc, Electron => Tau, -2.457e-3-7.5e-5);
-    masssquareddiff!(osc, Electorn => Muon, -7.5e-5);
+    mixingangle!(osc, 1 => 2, 0.58);
+    mixingangle!(osc, 1 => 3, 0.15);
+    mixingangle!(osc, 2 => 3, 0.737);
+    cpphase!(osc, 1 => 3, 5.34);
+    masssquareddiff!(osc, 2 => 3, -2.457e-3);
+    masssquareddiff!(osc, 1 => 3, -2.457e-3-7.5e-5);
+    masssquareddiff!(osc, 1 => 2, -7.5e-5);
 
     U = PMNSMatrix(osc)
     H = Hamiltonian(osc)
