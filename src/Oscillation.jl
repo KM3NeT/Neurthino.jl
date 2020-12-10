@@ -41,13 +41,13 @@ Set a mixing angle of an oscillation parameters struct
 - `value` The value which should be applied to the oscillation parameters
 
 """
-function mixingangle!(osc::OscillationParameters, indices::Pair{T, T}, value) where {T <: Union{Integer, NeutrinoFlavor}}
-    fromidx = Integer(indices[1])
-    toidx = Integer(indices[2])
-    if indices[fromidx] < indices[toidx]
-        osc.mixing_angles[indices[fromidx], indices[toidx]] = value
+function mixingangle!(osc::OscillationParameters, indices::Pair{T, T}, value) where {T <: Integer}
+    fromidx = first(indices)
+    toidx = last(indices)
+    if fromidx < toidx
+        osc.mixing_angles[fromidx, toidx] = value
     else
-        osc.mixing_angles[indices[toidx], indices[fromidx]] = value
+        osc.mixing_angles[toidx, fromidx] = value
     end
 end
 
@@ -62,13 +62,13 @@ Set a mass squared difference of an oscillation parameters struct
 - `value` The value which should be applied to the oscillation parameters
 
 """
-function masssquareddiff!(osc::OscillationParameters, indices::Pair{T, T}, value) where {T <: Union{Integer, NeutrinoFlavor}}
-    fromidx = Integer(indices[1])
-    toidx = Integer(indices[2])
-    if indices[fromidx] < indices[toidx]
-        osc.mass_squared_diff[indices[fromidx], indices[toidx]] = value
+function masssquareddiff!(osc::OscillationParameters, indices::Pair{T, T}, value) where {T <: Integer}
+    fromidx = first(indices)
+    toidx = last(indices)
+    if fromidx < toidx
+        osc.mass_squared_diff[fromidx, toidx] = value
     else
-        osc.mass_squared_diff[indices[toidx], indices[fromidx]] = -value
+        osc.mass_squared_diff[toidx, fromidx] = -value
     end
 end
 
@@ -83,58 +83,17 @@ Set a CP phase of an oscillation parameters struct
 - `value` The value which should be applied to the oscillation parameters
 
 """
-function cpphase!(osc::OscillationParameters, indices::Pair{T, T}, value) where {T <: Union{Integer, NeutrinoFlavor}}
-    fromidx = Integer(indices[1])
-    toidx = Integer(indices[2])
-    if indices[fromidx] < indices[toidx]
-        osc.cp_phases[indices[fromidx], indices[toidx]] = value
+function cpphase!(osc::OscillationParameters, indices::Pair{T, T}, value) where {T <: Integer}
+    fromidx = first(indices)
+    toidx = last(indices)
+    if fromidx < toidx
+        osc.cp_phases[fromidx, toidx] = value
     else
-        osc.cp_phases[indices[toidx], indices[fromidx]] = value
+        osc.cp_phases[toidx, fromidx] = value
     end
 end
 
-"""
-$(SIGNATURES)
 
-Create modified oscillation parameters for neutrino propagation through matter
-
-# Arguments
-- `osc_vacuum::OscillationParameters`: Oscillation parameters in vacuum
-- `matter_density`: Matter density in g*cm^-3 
-
-"""
-function MatterOscillationMatrices(osc_vacuum::OscillationParameters, matter_density)
-    H_vacuum = Diagonal(Hamiltonian(osc_vacuum)) 
-    U_vacuum = PMNSMatrix(osc_vacuum)
-    return MatterOscillationMatrices(U_vacuum, H_vacuum, matter_density)
-end
-
-"""
-$(SIGNATURES)
-
-Create modified oscillation parameters for neutrino propagation through matter
-
-# Arguments
-- `U`: Vacuum PMNSMatrix
-- `H`: Vacuum Hamiltonian
-- `matter_density`: Matter density [g*cm^-3] 
-- `energy`: Neutrino energy [GeV]
-- `zoa`: Proton nucleon ratio (Z/A)
-- `anti`: Is anti neutrino
-"""
-function MatterOscillationMatrices(U, H, matter_density, energy; zoa=0.5, anti=false)
-    H_eff = U * Diagonal{Complex}(H) * adjoint(U)
-    H_eff = H_eff
-    A = sqrt(2) * G_F * N_A * zoa * matter_density
-    if anti
-        H_eff[1,1] -= A * (2 * energy * 1e9)
-    else
-        H_eff[1,1] += A * (2 * energy * 1e9)
-    end
-    U_matter = eigvecs(H_eff)
-    H_matter = eigvals(H_eff)
-    return H_matter, U_matter
-end
 
 function PMNSMatrix(osc_params::OscillationParameters)
 """
@@ -212,10 +171,15 @@ based on the given oscillation parameters
 end
 
 
+function _transprobampl(U, H, energy, baseline)  
+    H_diag = 2.534 * Diagonal(H) * baseline / energy 
+    U * exp(-1im * H_diag) * adjoint(U)
+end
+
 """
 $(SIGNATURES)
 
-Calculate the transistion probability between the neutrino flavours
+Calculate the transistion probabilities between the neutrino flavours
 
 # Arguments
 - `U`:          Unitary transition matrix
@@ -225,15 +189,14 @@ Calculate the transistion probability between the neutrino flavours
 
 """
 function transprob(U, H, energy, baseline)  
-    H_diag = 2.534 * baseline .* ( energy .+ Diagonal(H) ./ ( 2 * energy ) )
-    A = U * exp(-1im * H_diag) * adjoint(U)
+    A = _transprobampl(U, H, energy, baseline)
     P = abs.(A) .^ 2
 end
 
 """
 $(SIGNATURES)
 
-Calculate the transistion probability between the neutrino flavours
+Calculate the transistion probabilities between the neutrino flavours
 
 # Arguments
 - `osc_params::OscillationParameters`:  Oscillation parameters
@@ -244,9 +207,24 @@ Calculate the transistion probability between the neutrino flavours
 function transprob(osc_params::OscillationParameters, energy, baseline)  
     H = Hamiltonian(osc_params)
     U = PMNSMatrix(osc_params)
-    H_diag = 2.534 * Diagonal(H) * baseline / energy 
-    A = U * exp(-1im * H_diag) * adjoint(U)
-    P = abs.(A) .^ 2
+    transprob(U, H, energy, baseline)
+end
+
+"""
+$(SIGNATURES)
+
+Calculate the transistion probabilities between the neutrino flavours
+
+# Arguments
+- `osc_params::OscillationParameters`:  Oscillation parameters
+- `energy`:                             Baseline [km]
+- `baseline`:                           Energy [GeV]
+
+"""
+function transprob(osc_params::OscillationParameters, flavors::Pair{T, T}, energy, baseline) where {T <: Union{NeutrinoFlavor, Integer}}
+    fromflavor = Int(first(flavors))
+    toflavor = Int(last(flavors))
+    transprob(osc, energy, baseline)[fromflavor, toflavor]
 end
 
 """

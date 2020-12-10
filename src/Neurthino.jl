@@ -17,7 +17,7 @@ const G_F = 8.961877245622253e-38 #[eV*cm^3]
 
 include("PREM.jl")
 include("Oscillation.jl")
-include("Path.jl")
+include("Matter.jl")
 include("Optimization.jl")
 
 end # module
