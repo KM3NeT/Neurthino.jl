@@ -4,7 +4,7 @@ $(SIGNATURES)
 Create modified oscillation parameters for neutrino propagation through matter
 
 # Arguments
-- `U`: Vacuum PMNSMatrix
+- `P`: Vacuum PMNS Matrix
 - `H`: Vacuum Hamiltonian
 - `density`: Matter density [g*cm^-3] 
 - `energy`: Neutrino energy [GeV]
@@ -13,7 +13,21 @@ Create modified oscillation parameters for neutrino propagation through matter
 """
 function MatterOscillationMatrices(U, H, energy, density; zoa=0.5, anti=false)
     H_eff = U * Diagonal{Complex}(H) * adjoint(U)
-    H_eff = H_eff
+    MatterOscillationMatrices(H_eff, energy, density; zoa=zoa, anti=anti)
+end
+"""
+$(SIGNATURES)
+
+Create modified oscillation parameters for neutrino propagation through matter
+
+# Arguments
+- `H_eff`: Effective Matter Hamiltonian
+- `density`: Matter density [g*cm^-3] 
+- `energy`: Neutrino energy [GeV]
+- `zoa`: Proton nucleon ratio (Z/A)
+- `anti`: Is anti neutrino
+"""
+function MatterOscillationMatrices(H_eff, energy, density; zoa=0.5, anti=false)
     A = sqrt(2) * G_F * N_A * zoa * density
     if anti
         H_eff[1,1] -= A * (2 * energy * 1e9)
@@ -38,7 +52,8 @@ Create modified oscillation parameters for neutrino propagation through matter
 function MatterOscillationMatrices(osc_vacuum::OscillationParameters, energy, density)
     H_vacuum = Diagonal(Hamiltonian(osc_vacuum)) 
     U_vacuum = PMNSMatrix(osc_vacuum)
-    return MatterOscillationMatrices(U_vacuum, H_vacuum, energy, density)
+    H_eff = U_vacuum * Diagonal{Complex}(H_vacuum) * adjoint(U_vacuum)
+    return MatterOscillationMatrices(H_eff, energy, density)
 end
 
 """
@@ -68,11 +83,12 @@ $(SIGNATURES)
 - `densities`: Matter densities of the traversed path [g/cm^3]
 - `baselines`: Path section lengths [km]
 """
+    H_eff = U * Diagonal{Complex}(H) * adjoint(U)
     A = fill(Matrix{Complex}(1I, size(U)), length(energy))
     for n in 1:length(energy)
         for (i,b) in enumerate(baselines)
-            U_mat, H_mat = MatterOscillationMatrices(U, H, energy[n], densities[i])
-            A[n] *= Neurthino._transprobampl(U_mat, H_mat, energy[n], b)
+            @inbounds U_mat, H_mat = MatterOscillationMatrices(H_eff, energy[n], densities[i])
+            @inbounds A[n] *= Neurthino._transprobampl(U_mat, H_mat, energy[n], b)
         end
     end
     P = map(x -> abs.(x) .^ 2, A)
