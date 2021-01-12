@@ -5,16 +5,18 @@
 end
 
 
-struct OscillationParameters{T, N}
-    mixing_angles::UnitUpperTriangular{T, <:MMatrix{N, N, T}}
-    mass_squared_diff::UnitUpperTriangular{T, <:MMatrix{N, N, T}}
-    cp_phases::UnitUpperTriangular{T, <:MMatrix{N, N, T}}
+struct OscillationParameters{T}
+    mixing_angles::Array{T,2}
+    mass_squared_diff::Array{T,2}
+    cp_phases::Array{T,2}
+    dim::Int64
 
-    OscillationParameters(dim::Integer) = begin
-        new{Float64, dim}(
-                UnitUpperTriangular(@MMatrix zeros(dim, dim)),
-                UnitUpperTriangular(@MMatrix zeros(dim, dim)),
-                UnitUpperTriangular(@MMatrix zeros(dim, dim)))
+    OscillationParameters(dim::Int64) = begin
+        new{Float64}(
+                zeros(dim, dim),
+                zeros(dim, dim),
+                zeros(dim, dim),
+                dim)
     end
 end
 
@@ -138,8 +140,7 @@ based on the given oscillation parameters
 - `osc_params::OscillationParameters`: Oscillation parameters
 
 """
-    dim = size(osc_params.mixing_angles)[1]
-    Hamiltonian(osc_params, zeros(Float64, dim))
+    Hamiltonian(osc_params, zeros(Float64, osc_params.dim))
 end 
 
 function Hamiltonian(osc_params::OscillationParameters, lambda)
@@ -154,10 +155,9 @@ based on the given oscillation parameters
 - `lambda`:                             Decay parameters for each mass eigenstate
 
 """
-    dim = size(osc_params.mixing_angles)[1]
-    H = zeros(Complex, dim)
-    for i in 1:dim
-        for j in 1:dim
+    H = zeros(ComplexF64, osc_params.dim)
+    for i in 1:osc_params.dim
+        for j in 1:osc_params.dim
             if i < j
                 H[i] += osc_params.mass_squared_diff[i,j]
             elseif j < i
@@ -166,7 +166,7 @@ based on the given oscillation parameters
         end
         H[i] += 1im * lambda[i]
     end
-    H /= dim
+    H /= osc_params.dim
     H
 end
 
