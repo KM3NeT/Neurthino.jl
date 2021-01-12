@@ -34,9 +34,8 @@ function MatterOscillationMatrices(H_eff, energy, density; zoa=0.5, anti=false)
     else
         H_eff[1,1] += A * (2 * energy * 1e9)
     end
-    U_matter = eigvecs(H_eff)
-    H_matter = eigvals(H_eff)
-    return U_matter, H_matter
+    tmp = eigen(H_eff)
+    return tmp.vectors, tmp.values
 end
 
 """
