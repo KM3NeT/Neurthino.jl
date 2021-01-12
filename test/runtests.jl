@@ -1,5 +1,4 @@
 using Test
-using Unitful
 
 @testset "PREM" begin
 include("PREM_tests.jl")
