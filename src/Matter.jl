@@ -67,6 +67,9 @@ $(SIGNATURES)
 - `baselines`: Path section lengths [km]
 """
 function mattertransprob(osc::OscillationParameters, energy, densities, baselines)
+    # TODO: attach U_vac and H_vac to the oscillation parameters, so that it's
+    # only calculated once and invalidated when any of the oscillation parameters
+    # are changed
     U_vac = PMNSMatrix(osc)
     H_vac = Hamiltonian(osc)
     mattertransprob(U_vac, H_vac, energy, densities, baselines)
