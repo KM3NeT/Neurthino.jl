@@ -6,6 +6,7 @@ using StaticArrays
 using Polynomials
 using DocStringExtensions
 using Interpolations
+using LRUCache
 
 export transprob, OscillationParameters, PMNSMatrix, Hamiltonian, MatterOscillationMatrices
 export masssquareddiff!, cpphase!, mixingangle!
