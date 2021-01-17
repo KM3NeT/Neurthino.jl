@@ -1,3 +1,12 @@
+struct Path{T}
+    density::Vector{T}
+    baseline::Vector{T}
+end
+
+Base.iterate(p::Path, state=1) = state > lenght(p.density) ? nothing : ( (density[state], baseline[state]),  state+1)
+
+Base.length(p::Path) = length(p.density)
+
 """
 $(SIGNATURES)
 
@@ -31,6 +40,7 @@ Create modified oscillation parameters for neutrino propagation through matter
 """
 function MatterOscillationMatrices(H_eff, energy, density; zoa=0.5, anti=false)
     A = sqrt(2) * G_F * N_A * zoa * density
+    a = H_eff[1,1]
     if anti
         H_eff[1,1] -= A * (2 * energy * 1e9)
     else
@@ -83,23 +93,25 @@ $(SIGNATURES)
 - `U`: Vacuum PMNS Matrix
 - `H`: Vacuum Hamiltonian
 - `energies`: Neutrino energies [GeV]
-- `densities`: Matter densities of the traversed path [g/cm^3]
-- `baselines`: Path section lengths [km]
+- `paths`: Neutrino paths
 """
-function mattertransprob(U, H, energies, densities, baselines)
-    H_eff = convert(Array{ComplexF64}, U * Diagonal{Complex}(H) * adjoint(U))
-    A = fill(Matrix{Complex}(1I, size(U)), length(energies))
-    cache_size = length(energies) * length(densities)
+function mattertransprob(U, H, energies, paths::Array{Path{Float64},1})
+    H_eff = U * Diagonal{Complex}(H) * adjoint(U)
+    A = zeros(Complex, length(energies), length(paths), size(U)...)
+    cache_size = length(energies) * sum(map(x->length(x.density), paths)) 
     lru = LRU{Tuple{Float64, Float64},
               Tuple{Array{Complex{Float64},2}, Vector{Complex{Float64}}}}(maxsize=cache_size)
-    for n in 1:length(energies)
-        @inbounds E = energies[n]
-        for (i,b) in enumerate(baselines)
-            @inbounds ρ = densities[i]
-            U_mat, H_mat = get!(lru, (E, ρ)) do
-                MatterOscillationMatrices(copy(H_eff), E, ρ)
+    for k in 1:length(energies)
+        @inbounds E = energies[k]
+        for (l, p) in enumerate(paths)
+            @inbounds A[k, l, :, :] = Matrix{ComplexF64}(1I, size(U))
+            for (m,b) in enumerate(p.baseline)
+                @inbounds ρ = p.density[m]
+                U_mat, H_mat = get!(lru, (E, ρ)) do
+                    MatterOscillationMatrices(copy(H_eff), E, ρ)
+                end
+                @inbounds A[k, l,  :, :] *= Neurthino._transprobampl(U_mat, H_mat, E, b)
             end
-            @inbounds A[n] *= Neurthino._transprobampl(U_mat, H_mat, E, b)
         end
     end
     P = map(x -> abs.(x) .^ 2, A)
