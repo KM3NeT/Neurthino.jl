@@ -53,7 +53,7 @@ Create modified oscillation parameters for neutrino propagation through matter
 function MatterOscillationMatrices(osc_vacuum::OscillationParameters, energy, density)
     H_vacuum = Diagonal(Hamiltonian(osc_vacuum)) 
     U_vacuum = PMNSMatrix(osc_vacuum)
-    H_eff = U_vacuum * Diagonal{Complex}(H_vacuum) * adjoint(U_vacuum)
+    H_eff = convert(Array{ComplexF64}, U_vacuum * Diagonal{Complex}(H_vacuum) * adjoint(U_vacuum))
     return MatterOscillationMatrices(H_eff, energy, density)
 end
 
@@ -87,7 +87,7 @@ $(SIGNATURES)
 - `baselines`: Path section lengths [km]
 """
 function mattertransprob(U, H, energies, densities, baselines)
-    H_eff = U * Diagonal{Complex}(H) * adjoint(U)
+    H_eff = convert(ComplexF64, U * Diagonal{Complex}(H) * adjoint(U))
     A = fill(Matrix{Complex}(1I, size(U)), length(energies))
     cache_size = length(energies) * length(densities)
     lru = LRU{Tuple{Float64, Float64},
