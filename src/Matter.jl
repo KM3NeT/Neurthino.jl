@@ -12,7 +12,7 @@ Create modified oscillation parameters for neutrino propagation through matter
 - `anti`: Is anti neutrino
 """
 function MatterOscillationMatrices(U, H, energy, density; zoa=0.5, anti=false)
-    H_eff = U * Diagonal{Complex}(H) * adjoint(U)
+    H_eff = convert(Array{ComplexF64}, U * Diagonal{Complex}(H) * adjoint(U))
     MatterOscillationMatrices(H_eff, energy, density; zoa=zoa, anti=anti)
 end
 
