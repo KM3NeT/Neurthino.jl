@@ -68,7 +68,7 @@ Total path length through earth from detector position
     end
 end
 
-function prempath(zenith::Vector{Float64}, zposition; samples=100)
+function prempath(zenith::Vector{Float64}, zposition; samples=100, discrete_densities=nothing)
 """
 $(SIGNATURES)
 
@@ -77,10 +77,10 @@ $(SIGNATURES)
 - `zposition::Float64` Distance below the surface of the Earth (positive value) [km]
 - `samples` The number of steps with equal distance
 """
-    map(z->prempath(z, zposition; samples=samples), zenith)
+    map(z->prempath(z, zposition; samples=samples, discrete_densities=discrete_densities), zenith)
 end
 
-function prempath(zenith::T, zposition; samples=100) where {T <: Number}
+function prempath(zenith::T, zposition; samples=100, discrete_densities=nothing) where {T <: Number}
 """
 $(SIGNATURES)
 
@@ -96,5 +96,9 @@ $(SIGNATURES)
     zprime = EARTH_RADIUS - zposition
     radii = map(x -> sqrt(zprime^2 + x^2 + 2*zprime*x*cos(zenith)), total_pathlen)
     densities = PREM.(radii)
+    if !isnothing(discrete_densities)
+        idx = map(d->searchsortedfirst(discrete_densities,d), densities)
+        densities = map(i->discrete_densities[i], idx)
+    end
     Path(densities, sections)
 end
