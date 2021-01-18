@@ -97,7 +97,7 @@ function mattertransprob(U, H, energies, densities, baselines)
         for (i,b) in enumerate(baselines)
             @inbounds ρ = densities[i]
             U_mat, H_mat = get!(lru, (E, ρ)) do
-                MatterOscillationMatrices(H_eff, E, ρ)
+                MatterOscillationMatrices(copy(H_eff), E, ρ)
             end
             @inbounds A[n] *= Neurthino._transprobampl(U_mat, H_mat, E, b)
         end
