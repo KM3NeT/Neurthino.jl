@@ -87,7 +87,7 @@ $(SIGNATURES)
 - `baselines`: Path section lengths [km]
 """
 function mattertransprob(U, H, energies, densities, baselines)
-    H_eff = convert(ComplexF64, U * Diagonal{Complex}(H) * adjoint(U))
+    H_eff = convert(Array{ComplexF64}, U * Diagonal{Complex}(H) * adjoint(U))
     A = fill(Matrix{Complex}(1I, size(U)), length(energies))
     cache_size = length(energies) * length(densities)
     lru = LRU{Tuple{Float64, Float64},
