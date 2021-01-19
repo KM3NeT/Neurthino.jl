@@ -3,7 +3,7 @@ struct Path{T}
     baseline::Vector{T}
 end
 
-Base.iterate(p::Path, state=1) = state > length(p.density) ? nothing : ( (density[state], baseline[state]),  state+1)
+Base.iterate(p::Path, state=1) = state > length(p.density) ? nothing : ( (p.density[state], p.baseline[state]),  state+1)
 
 Base.length(p::Path) = length(p.density)
 
