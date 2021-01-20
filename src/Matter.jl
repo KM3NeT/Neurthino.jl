@@ -57,14 +57,17 @@ Create modified oscillation parameters for neutrino propagation through matter
 
 # Arguments
 - `osc_vacuum::OscillationParameters`: Oscillation parameters in vacuum
+- `energy`: Neutrino energy [GeV]
 - `density`: Matter density in g*cm^-3 
+- `zoa`: Proton nucleon ratio (Z/A)
+- `anti`: Is anti neutrino
 
 """
-function MatterOscillationMatrices(osc_vacuum::OscillationParameters, energy, density)
+function MatterOscillationMatrices(osc_vacuum::OscillationParameters, energy, density; zoa=0.5, anti=false)
     H_vacuum = Diagonal(Hamiltonian(osc_vacuum)) 
     U_vacuum = PMNSMatrix(osc_vacuum)
-    H_eff = convert(Array{ComplexF64}, U_vacuum * Diagonal{Complex}(H_vacuum) * adjoint(U_vacuum))
-    return MatterOscillationMatrices(H_eff, energy, density)
+    H_eff = convert(Array{ComplexF64}, U_vacuum * Diagonal{ComplexF64}(H_vacuum) * adjoint(U_vacuum))
+    return MatterOscillationMatrices(H_eff, energy, density; zoa=zoa, anti=anti)
 end
 
 """
@@ -73,16 +76,17 @@ $(SIGNATURES)
 # Arguments
 - `osc_params::OscillationParameters`: Vacuum oscillation parameters
 - `energy`: Neutrino energy [GeV]
-- `densities`: Matter densities of the traversed path [g/cm^3]
-- `baselines`: Path section lengths [km]
+- `paths`: Neutrino paths
+- `zoa`: Proton nucleon ratio (Z/A)
+- `anti`: Is anti neutrino
 """
-function mattertransprob(osc::OscillationParameters, energy, densities, baselines)
+function mattertransprob(osc::OscillationParameters, energy, paths::Array{Path{Float64},1}; zoa=0.5, anti=false)
     # TODO: attach U_vac and H_vac to the oscillation parameters, so that it's
     # only calculated once and invalidated when any of the oscillation parameters
     # are changed
     U_vac = PMNSMatrix(osc)
     H_vac = Hamiltonian(osc)
-    mattertransprob(U_vac, H_vac, energy, densities, baselines)
+    mattertransprob(U_vac, H_vac, energy, densities, baselines; zoa=zoa, anti=anti)
 end
 
 
@@ -94,8 +98,10 @@ $(SIGNATURES)
 - `H`: Vacuum Hamiltonian
 - `energies`: Neutrino energies [GeV]
 - `paths`: Neutrino paths
+- `zoa`: Proton nucleon ratio (Z/A)
+- `anti`: Is anti neutrino
 """
-function mattertransprob(U, H, energies, paths::Array{Path{Float64},1})
+function mattertransprob(U, H, energies, paths::Array{Path{Float64},1}; zoa=0.5, anti=false)
     H_eff = U * Diagonal{ComplexF64}(H) * adjoint(U)
     A = zeros(ComplexF64, length(energies), length(paths), size(U)...)
     cache_size = length(energies) * sum(map(x->length(x.density), paths)) 
@@ -108,7 +114,7 @@ function mattertransprob(U, H, energies, paths::Array{Path{Float64},1})
             for (m,b) in enumerate(p.baseline)
                 @inbounds ρ = p.density[m]
                 U_mat, H_mat = get!(lru, (E, ρ)) do
-                    MatterOscillationMatrices(copy(H_eff), E, ρ)
+                    MatterOscillationMatrices(copy(H_eff), E, ρ; zoa=zoa, anti=anti)
                 end  
                 tmp *= Neurthino._transprobampl(U_mat, H_mat, E, b)
             end
