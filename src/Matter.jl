@@ -96,22 +96,23 @@ $(SIGNATURES)
 - `paths`: Neutrino paths
 """
 function mattertransprob(U, H, energies, paths::Array{Path{Float64},1})
-    H_eff = U * Diagonal{Complex}(H) * adjoint(U)
-    A = zeros(Complex, length(energies), length(paths), size(U)...)
+    H_eff = U * Diagonal{ComplexF64}(H) * adjoint(U)
+    A = zeros(ComplexF64, length(energies), length(paths), size(U)...)
     cache_size = length(energies) * sum(map(x->length(x.density), paths)) 
     lru = LRU{Tuple{Float64, Float64},
-              Tuple{Array{Complex{Float64},2}, Vector{Complex{Float64}}}}(maxsize=cache_size)
+              Tuple{Array{ComplexF64,2}, Vector{ComplexF64}}}(maxsize=cache_size)
     for k in 1:length(energies)
         @inbounds E = energies[k]
         for (l, p) in enumerate(paths)
-            @inbounds A[k, l, :, :] = Matrix{ComplexF64}(1I, size(U))
+            tmp = Matrix{ComplexF64}(1I, size(U))
             for (m,b) in enumerate(p.baseline)
                 @inbounds ρ = p.density[m]
                 U_mat, H_mat = get!(lru, (E, ρ)) do
                     MatterOscillationMatrices(copy(H_eff), E, ρ)
-                end
-                @inbounds A[k, l,  :, :] *= Neurthino._transprobampl(U_mat, H_mat, E, b)
+                end  
+                tmp *= Neurthino._transprobampl(U_mat, H_mat, E, b)
             end
+            @inbounds A[k, l,  :, :] = tmp        
         end
     end
     P = map(x -> abs.(x) .^ 2, A)

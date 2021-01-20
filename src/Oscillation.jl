@@ -108,7 +108,7 @@ Create rotation matrix (PMNS) based on the given oscillation parameters
 
 """
     dim = size(osc_params.mixing_angles)[1]
-    pmns = Matrix{Complex}(1.0I, dim, dim) 
+    pmns = Matrix{ComplexF64}(1.0I, dim, dim) 
     indices = _generate_ordered_index_pairs(dim)
     for (i, j) in indices
         rot = sparse((1.0+0im)I, dim, dim) 
@@ -172,7 +172,7 @@ end
 
 
 function _transprobampl(U, H, energy, baseline)  
-    H_diag = 2.534 * Diagonal(H) * baseline / energy 
+    H_diag = 2.534 * Diagonal{ComplexF64}(H) * baseline / energy 
     U * exp(-1im * H_diag) * adjoint(U)
 end
 
