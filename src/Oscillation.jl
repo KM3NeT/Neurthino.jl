@@ -7,14 +7,14 @@ end
 
 struct OscillationParameters{T}
     mixing_angles::Array{T,2}
-    mass_squared_diff::Array{T,2}
+    mass_squared_diff::SparseMatrixCSC{T,<:Integer}
     cp_phases::Array{T,2}
     dim::Int64
 
     OscillationParameters(dim::Int64) = begin
-        new{Float64}(
+        new{ComplexF64}(
                 zeros(dim, dim),
-                zeros(dim, dim),
+                spzeros(dim, dim),
                 zeros(dim, dim),
                 dim)
     end
@@ -53,6 +53,40 @@ function mixingangle!(osc::OscillationParameters, indices::Pair{T, T}, value) wh
     end
 end
 
+function _mass_matrix_fully_determined(osc::OscillationParameters)
+    I, J, _ = findnz(osc.mass_squared_diff)
+    set_elements = collect(zip(I, J))
+    indices = Set([first.(set_elements)..., last.(set_elements)...])
+    length(indices) >= osc.dim & length(set_elements) >= (osc.dim - 1)  
+end
+
+function _mass_matrix_overdetermined(osc::OscillationParameters)
+    I, J, _ = findnz(osc.mass_squared_diff)
+    set_elements = collect(zip(I, J))
+    indices = Set([first.(set_elements)..., last.(set_elements)...])
+    length(set_elements) >= length(indices) 
+end
+
+function _completed_mass_matrix(osc::OscillationParameters)
+    tmp = Matrix(osc.mass_squared_diff)
+    tmp = tmp - transpose(tmp)
+    if _mass_matrix_fully_determined(osc)
+        I, J, _ = findnz(osc.mass_squared_diff)
+        given_idx = collect(zip(I, J))
+        wanted_idx = filter(x->(x[1] < x[2]) & (x ∉ given_idx), collect(product(1:osc.dim, 1:osc.dim)))
+        graph = SimpleDiGraph(map(x->x!=0.0, tmp))
+        for (from, to) in wanted_idx
+            @show (from, to)
+            path = a_star(graph, from, to)
+            for edge in path
+                tmp[from, to] += tmp[edge.src, edge.dst]
+            end
+        end
+    else
+        error("Mass squared differences not fully determined!")
+    end
+    UpperTriangular(tmp)
+end
 """
 $(SIGNATURES)
 
@@ -71,6 +105,9 @@ function masssquareddiff!(osc::OscillationParameters, indices::Pair{T, T}, value
         osc.mass_squared_diff[fromidx, toidx] = value
     else
         osc.mass_squared_diff[toidx, fromidx] = -value
+    end
+    if _mass_matrix_overdetermined(osc)
+        @warn "Mass squared difference fields (partially) overdetermined!"
     end
 end
 
@@ -155,13 +192,14 @@ based on the given oscillation parameters
 - `lambda`:                             Decay parameters for each mass eigenstate
 
 """
+    full_mass_squared_matrix = _completed_mass_matrix(osc_params)
     H = zeros(ComplexF64, osc_params.dim)
     for i in 1:osc_params.dim
         for j in 1:osc_params.dim
             if i < j
-                H[i] += osc_params.mass_squared_diff[i,j]
+                H[i] += full_mass_squared_matrix[i,j]
             elseif j < i
-                H[i] -= osc_params.mass_squared_diff[j,i]
+                H[i] -= full_mass_squared_matrix[j,i]
             end
         end
         H[i] += 1im * lambda[i]
