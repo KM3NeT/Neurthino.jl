@@ -7,7 +7,7 @@ using Polynomials
 using DocStringExtensions
 using Interpolations
 using LRUCache
-using SimpleGraphs
+using LightGraphs
 using IterTools
 
 export transprob, OscillationParameters, PMNSMatrix, Hamiltonian, MatterOscillationMatrices
