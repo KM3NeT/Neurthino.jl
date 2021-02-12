@@ -1,4 +1,4 @@
-@enum NeutrinoFlavor begin
+@enum NeutrinoFlavour begin
   Electron = 1
   Muon = 2
   Tau = 3
@@ -40,10 +40,10 @@ Set a mixing angle of an oscillation parameters struct
 # Arguments
 - `osc::OscillationParameters`: Oscillation parameters 
 - `indices::Pair{<:Integer, <:Integer}`: The indices of the mixing angle
-- `value` The value which should be applied to the oscillation parameters
+- `value<:Real` The value which should be applied to the oscillation parameters
 
 """
-function mixingangle!(osc::OscillationParameters, indices::Pair{T, T}, value) where {T <: Integer}
+function mixingangle!(osc::OscillationParameters, indices::Pair{T, T}, value::S) where {T <: Integer, S <: Real}
     fromidx = first(indices)
     toidx = last(indices)
     if fromidx < toidx
@@ -52,6 +52,48 @@ function mixingangle!(osc::OscillationParameters, indices::Pair{T, T}, value) wh
         osc.mixing_angles[toidx, fromidx] = value
     end
 end
+
+"""
+$(SIGNATURES)
+
+Set a mixing angle of an oscillation parameters struct
+
+# Arguments
+- `osc::OscillationParameters`: Oscillation parameters 
+- `args::Tuple{Pair{<:Integer, <:Integer}, <:Real}`: The indices of the mixing angle
+
+"""
+function mixingangle!(osc::OscillationParameters, (args::Tuple{Pair{T, T}, S})...) where {T <: Integer, S<: Real}
+    for a in args
+        mixingangle!(osc, first(a), last(a))
+    end
+end
+
+"""
+$(SIGNATURES)
+
+Set a mixing angle of an oscillation parameters struct
+
+# Arguments
+- `osc::OscillationParameters`: Oscillation parameters 
+- `indices::Pair{<:Integer, <:Integer}`: The indices of the mixing angle
+- `value<:Real` The value which should be applied to the oscillation parameters
+
+"""
+θ!(osc, indices, value) = mixingangle!(osc, indices, value)
+
+
+"""
+$(SIGNATURES)
+
+Set a mixing angle of an oscillation parameters struct
+
+# Arguments
+- `osc::OscillationParameters`: Oscillation parameters 
+- `args::Tuple{Pair{<:Integer, <:Integer}, <:Real}`: The indices of the mixing angle
+
+"""
+θ!(osc, args...) = mixingangle!(osc, args...)
 
 function _mass_matrix_fully_determined(osc::OscillationParameters)
     I, J, _ = findnz(osc.mass_squared_diff)
@@ -76,7 +118,6 @@ function _completed_mass_matrix(osc::OscillationParameters)
         wanted_idx = filter(x->(x[1] < x[2]) & (x ∉ given_idx), collect(product(1:osc.dim, 1:osc.dim)))
         graph = SimpleDiGraph(map(x->x!=0.0, tmp))
         for (from, to) in wanted_idx
-            @show (from, to)
             path = a_star(graph, from, to)
             for edge in path
                 tmp[from, to] += tmp[edge.src, edge.dst]
@@ -87,6 +128,7 @@ function _completed_mass_matrix(osc::OscillationParameters)
     end
     UpperTriangular(tmp)
 end
+
 """
 $(SIGNATURES)
 
@@ -98,7 +140,7 @@ Set a mass squared difference of an oscillation parameters struct
 - `value` The value which should be applied to the oscillation parameters
 
 """
-function masssquareddiff!(osc::OscillationParameters, indices::Pair{T, T}, value) where {T <: Integer}
+function masssquareddiff!(osc::OscillationParameters, indices::Pair{T, T}, value::S) where {T <: Integer, S <: Number}
     fromidx = first(indices)
     toidx = last(indices)
     if fromidx < toidx
@@ -114,6 +156,47 @@ end
 """
 $(SIGNATURES)
 
+Set a mass squared difference of an oscillation parameters struct
+
+# Arguments
+- `osc::OscillationParameters`: Oscillation parameters 
+- `args::Tuple{Pair{<:Integer, <:Integer}, <:Number}`: Indices and values of the mass squared difference
+
+"""
+function masssquareddiff!(osc::OscillationParameters, (args::Tuple{Pair{<:Integer, <:Integer}, <:Number})...)
+    for a in args
+        masssquareddiff!(osc, first(a), last(a))
+    end
+end
+
+"""
+$(SIGNATURES)
+
+Set a mass squared difference of an oscillation parameters struct
+
+# Arguments
+- `osc::OscillationParameters`: Oscillation parameters 
+- `indices::Pair{<:Integer, <:Integer}`: The indices of the mass squared difference
+- `value` The value which should be applied to the oscillation parameters
+
+"""
+Δm²!(osc, indices, value) = masssquareddiff!(osc, indices, value)
+
+"""
+$(SIGNATURES)
+
+Set a mass squared difference of an oscillation parameters struct
+
+# Arguments
+- `osc::OscillationParameters`: Oscillation parameters 
+- `args::Tuple{Pair{<:Integer, <:Integer}, <:Number}`: Indices and values of the mass squared difference
+
+"""
+Δm²!(osc, args...) = masssquareddiff!(osc, args...)
+
+"""
+$(SIGNATURES)
+
 Set a CP phase of an oscillation parameters struct
 
 # Arguments
@@ -122,7 +205,7 @@ Set a CP phase of an oscillation parameters struct
 - `value` The value which should be applied to the oscillation parameters
 
 """
-function cpphase!(osc::OscillationParameters, indices::Pair{T, T}, value) where {T <: Integer}
+function cpphase!(osc::OscillationParameters, indices::Pair{T, T}, value::S) where {T <: Integer, S <: Real}
     fromidx = first(indices)
     toidx = last(indices)
     if fromidx < toidx
@@ -132,7 +215,46 @@ function cpphase!(osc::OscillationParameters, indices::Pair{T, T}, value) where 
     end
 end
 
+"""
+$(SIGNATURES)
 
+Set a CP phase of an oscillation parameters struct
+
+# Arguments
+- `osc::OscillationParameters`: Oscillation parameters 
+- `args::Tuple{Pair{<:Integer, <:Integer}, <:Number}`: Indices and values of the CP phase
+
+"""
+function cpphase!(osc::OscillationParameters, (args::Tuple{Pair{T, T}, S})...) where {T <: Integer, S <: Real}
+    for a in args
+        cpphase!(osc, first(a), last(a))
+    end
+end
+
+"""
+$(SIGNATURES)
+
+Set a CP phase of an oscillation parameters struct
+
+# Arguments
+- `osc::OscillationParameters`: Oscillation parameters 
+- `indices::Pair{<:Integer, <:Integer}`: The indices of the mass difference
+- `value` The value which should be applied to the oscillation parameters
+
+"""
+δ!(osc, indices, value) = cpphase!(osc, indices, value)
+
+"""
+$(SIGNATURES)
+
+Set a CP phase of an oscillation parameters struct
+
+# Arguments
+- `osc::OscillationParameters`: Oscillation parameters 
+- `args::Tuple{Pair{<:Integer, <:Integer}, <:Number}`: Indices and values of the CP phase
+
+"""
+δ!(osc, args...) = cpphase!(osc, args...)
 
 function PMNSMatrix(osc_params::OscillationParameters)
 """
@@ -255,15 +377,59 @@ Calculate the transistion probabilities between the neutrino flavours
 
 # Arguments
 - `osc_params::OscillationParameters`:  Oscillation parameters
+- `flavours::Pair{Union{NeutrinoFlavour, Integer}, Union{NeutrinoFlavour, Integer}}`: Pair indicating the initial and final flavour
 - `energy`:                             Baseline [km]
 - `baseline`:                           Energy [GeV]
 
 """
-function transprob(osc_params::OscillationParameters, flavors::Pair{T, T}, energy, baseline) where {T <: Union{NeutrinoFlavor, Integer}}
+function transprob(osc_params::OscillationParameters, flavors::Pair{T, T}, energy, baseline) where {T <: Union{NeutrinoFlavour, Integer}}
     fromflavor = Int(first(flavors))
     toflavor = Int(last(flavors))
     transprob(osc, energy, baseline)[fromflavor, toflavor]
 end
+
+
+"""
+$(SIGNATURES)
+
+Calculate the transistion probabilities between the neutrino flavours
+
+# Arguments
+- `U`:          Unitary transition matrix
+- `H`:          Energy eigenvalues
+- `energy`:     Baseline [km]
+- `baseline`:   Energy [GeV]
+
+"""
+Pνν(U, H, energy, baseline) = transprob(U, H, energy, baseline)  
+
+
+"""
+$(SIGNATURES)
+
+Calculate the transistion probabilities between the neutrino flavours
+
+# Arguments
+- `osc_params::OscillationParameters`:  Oscillation parameters
+- `energy`:                             Baseline [km]
+- `baseline`:                           Energy [GeV]
+
+"""
+Pνν(osc_params, energy, baseline) = transprob(osc_params, energy, baseline)  
+
+"""
+$(SIGNATURES)
+
+Calculate the transistion probabilities between the neutrino flavours
+
+# Arguments
+- `osc_params::OscillationParameters`:  Oscillation parameters
+- `flavours::Pair{Union{NeutrinoFlavour, Integer}, Union{NeutrinoFlavour, Integer}}`: Pair indicating the initial and final flavour
+- `energy`:                             Baseline [km]
+- `baseline`:                           Energy [GeV]
+
+"""
+Pνν(osc_params, flavours::Pair{T, T}, energy, baseline) where {T <: Union{NeutrinoFlavour, Integer}} = transprob(osc_params, flavours, energy, baseline)  
 
 """
 $(SIGNATURES)
