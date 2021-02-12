@@ -36,9 +36,9 @@ julia> setδ!(osc, 1=>3, 3.86);
 The mass squared differences are defined as <img src="https://render.githubusercontent.com/render/math?math=\Delta_{ij}=m_i^2-m_j^2"> and
 within the package the convention <img src="https://render.githubusercontent.com/render/math?math=\forall%20i%3Cj:m_i%3Cm_j"> is kept.
 ```
-julia> Δm²!(osc, 2=>3, -2.523e-3);
+julia> setΔm²!(osc, 2=>3, -2.523e-3);
 
-julia> Δm²!(osc, 1=>2, -7.39e-5);
+julia> setΔm²!(osc, 1=>2, -7.39e-5);
 ```
 These oscillation parameters can now be used in order to calculate the transition
 probabilities between the flavour states. 
