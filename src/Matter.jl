@@ -126,28 +126,3 @@ function transprob(U, H, energies, paths::Vector{Path{Float64}}; zoa=0.5, anti=f
     P = map(x -> abs.(x) .^ 2, A)
     P
 end
-
-"""
-$(SIGNATURES)
-
-# Arguments
-- `osc_vacuum::OscillationParameters`: Vacuum oscillation parameters
-- `energy`: Neutrino energy [GeV]
-- `paths`: Neutrino paths
-- `zoa`: Proton nucleon ratio (Z/A)
-- `anti`: Is anti neutrino
-"""
-Pνν(osc_vacuum, energies, paths::Vector{Path{Float64}}; zoa=0.5, anti=false) = transprob(osc_vacuum, energies, paths; zoa=zoa, anti=anti)
-
-"""
-$(SIGNATURES)
-
-# Arguments
-- `U`: Vacuum PMNS Matrix
-- `H`: Vacuum Hamiltonian
-- `energies`: Neutrino energies [GeV]
-- `paths`: Neutrino paths
-- `zoa`: Proton nucleon ratio (Z/A)
-- `anti`: Is anti neutrino
-"""
-Pνν(U, H, energies, paths::Vector{Path{Float64}}; zoa=0.5, anti=false) = transprob(U, H, energies, paths; zoa=zoa, anti=anti)
