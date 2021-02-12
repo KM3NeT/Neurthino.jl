@@ -88,7 +88,7 @@ function mattertransprob(osc::OscillationParameters, energy, paths::Array{Path{F
     # are changed
     U_vac = PMNSMatrix(osc)
     H_vac = Hamiltonian(osc)
-    mattertransprob(U_vac, H_vac, energy, densities, baselines; zoa=zoa, anti=anti)
+    transprob(U_vac, H_vac, energy, densities, baselines; zoa=zoa, anti=anti)
 end
 
 
@@ -103,7 +103,7 @@ $(SIGNATURES)
 - `zoa`: Proton nucleon ratio (Z/A)
 - `anti`: Is anti neutrino
 """
-function mattertransprob(U, H, energies, paths::Array{Path{Float64},1}; zoa=0.5, anti=false)
+function transprob(U, H, energies, paths::Array{Path{Float64},1}; zoa=0.5, anti=false)
     H_eff = U * Diagonal{ComplexF64}(H) * adjoint(U)
     A = zeros(ComplexF64, length(energies), length(paths), size(U)...)
     cache_size = length(energies) * sum(map(x->length(x.density), paths)) 
