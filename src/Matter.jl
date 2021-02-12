@@ -76,18 +76,18 @@ end
 $(SIGNATURES)
 
 # Arguments
-- `osc_params::OscillationParameters`: Vacuum oscillation parameters
+- `osc_vacuum::OscillationParameters`: Vacuum oscillation parameters
 - `energy`: Neutrino energy [GeV]
 - `paths`: Neutrino paths
 - `zoa`: Proton nucleon ratio (Z/A)
 - `anti`: Is anti neutrino
 """
-function mattertransprob(osc::OscillationParameters, energy, paths::Array{Path{Float64},1}; zoa=0.5, anti=false)
+function transprob(osc_vacuum::OscillationParameters, energy, paths::Vector{Path{Float64}}; zoa=0.5, anti=false)
     # TODO: attach U_vac and H_vac to the oscillation parameters, so that it's
     # only calculated once and invalidated when any of the oscillation parameters
     # are changed
-    U_vac = PMNSMatrix(osc)
-    H_vac = Hamiltonian(osc)
+    U_vac = PMNSMatrix(osc_vacuum)
+    H_vac = Hamiltonian(osc_vacuum)
     transprob(U_vac, H_vac, energy, densities, baselines; zoa=zoa, anti=anti)
 end
 
@@ -103,7 +103,7 @@ $(SIGNATURES)
 - `zoa`: Proton nucleon ratio (Z/A)
 - `anti`: Is anti neutrino
 """
-function transprob(U, H, energies, paths::Array{Path{Float64},1}; zoa=0.5, anti=false)
+function transprob(U, H, energies, paths::Vector{Path{Float64}}; zoa=0.5, anti=false)
     H_eff = U * Diagonal{ComplexF64}(H) * adjoint(U)
     A = zeros(ComplexF64, length(energies), length(paths), size(U)...)
     cache_size = length(energies) * sum(map(x->length(x.density), paths)) 
@@ -126,3 +126,28 @@ function transprob(U, H, energies, paths::Array{Path{Float64},1}; zoa=0.5, anti=
     P = map(x -> abs.(x) .^ 2, A)
     P
 end
+
+"""
+$(SIGNATURES)
+
+# Arguments
+- `osc_vacuum::OscillationParameters`: Vacuum oscillation parameters
+- `energy`: Neutrino energy [GeV]
+- `paths`: Neutrino paths
+- `zoa`: Proton nucleon ratio (Z/A)
+- `anti`: Is anti neutrino
+"""
+Pνν(osc_vacuum, energies, paths::Vector{Path{Float64}}; zoa=0.5, anti=false) = transprob(osc_vacuum, energies, paths; zoa=zoa, anti=anti)
+
+"""
+$(SIGNATURES)
+
+# Arguments
+- `U`: Vacuum PMNS Matrix
+- `H`: Vacuum Hamiltonian
+- `energies`: Neutrino energies [GeV]
+- `paths`: Neutrino paths
+- `zoa`: Proton nucleon ratio (Z/A)
+- `anti`: Is anti neutrino
+"""
+Pνν(U, H, energies, paths::Vector{Path{Float64}}; zoa=0.5, anti=false) = transprob(U, H, energies, paths; zoa=zoa, anti=anti)
