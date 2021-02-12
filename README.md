@@ -22,8 +22,7 @@ julia> using Neurthino
 
 julia> osc = OscillationParameters(3);
 ```
-The values of the mixing angles (setθ!), mass squared differences (Δm²) and CP phases (setδ!) are 
-initialised to 0 and have to be set individually.
+The values of the mixing angles (`setθ!`), mass squared differences (`setΔm²`) and CP phases (`setδ!`) are initialised to 0 and have to be set individually.
 ```
 julia> setθ!(osc, 1=>2, 0.59);
 
