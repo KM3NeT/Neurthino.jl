@@ -69,31 +69,7 @@ function mixingangle!(osc::OscillationParameters, (args::Tuple{Pair{T, T}, S})..
     end
 end
 
-"""
-$(SIGNATURES)
-
-Set a mixing angle of an oscillation parameters struct
-
-# Arguments
-- `osc::OscillationParameters`: Oscillation parameters 
-- `indices::Pair{<:Integer, <:Integer}`: The indices of the mixing angle
-- `value<:Real` The value which should be applied to the oscillation parameters
-
-"""
-θ!(osc, indices, value) = mixingangle!(osc, indices, value)
-
-
-"""
-$(SIGNATURES)
-
-Set a mixing angle of an oscillation parameters struct
-
-# Arguments
-- `osc::OscillationParameters`: Oscillation parameters 
-- `args::Tuple{Pair{<:Integer, <:Integer}, <:Real}`: The indices of the mixing angle
-
-"""
-θ!(osc, args...) = mixingangle!(osc, args...)
+const setθ! = mixingangle!
 
 function _mass_matrix_fully_determined(osc::OscillationParameters)
     I, J, _ = findnz(osc.mass_squared_diff)
@@ -169,30 +145,7 @@ function masssquareddiff!(osc::OscillationParameters, (args::Tuple{Pair{<:Intege
     end
 end
 
-"""
-$(SIGNATURES)
-
-Set a mass squared difference of an oscillation parameters struct
-
-# Arguments
-- `osc::OscillationParameters`: Oscillation parameters 
-- `indices::Pair{<:Integer, <:Integer}`: The indices of the mass squared difference
-- `value` The value which should be applied to the oscillation parameters
-
-"""
-Δm²!(osc, indices, value) = masssquareddiff!(osc, indices, value)
-
-"""
-$(SIGNATURES)
-
-Set a mass squared difference of an oscillation parameters struct
-
-# Arguments
-- `osc::OscillationParameters`: Oscillation parameters 
-- `args::Tuple{Pair{<:Integer, <:Integer}, <:Number}`: Indices and values of the mass squared difference
-
-"""
-Δm²!(osc, args...) = masssquareddiff!(osc, args...)
+const Δm²! = masssquareddiff!
 
 """
 $(SIGNATURES)
@@ -231,30 +184,7 @@ function cpphase!(osc::OscillationParameters, (args::Tuple{Pair{T, T}, S})...) w
     end
 end
 
-"""
-$(SIGNATURES)
-
-Set a CP phase of an oscillation parameters struct
-
-# Arguments
-- `osc::OscillationParameters`: Oscillation parameters 
-- `indices::Pair{<:Integer, <:Integer}`: The indices of the mass difference
-- `value` The value which should be applied to the oscillation parameters
-
-"""
-δ!(osc, indices, value) = cpphase!(osc, indices, value)
-
-"""
-$(SIGNATURES)
-
-Set a CP phase of an oscillation parameters struct
-
-# Arguments
-- `osc::OscillationParameters`: Oscillation parameters 
-- `args::Tuple{Pair{<:Integer, <:Integer}, <:Number}`: Indices and values of the CP phase
-
-"""
-δ!(osc, args...) = cpphase!(osc, args...)
+const setδ! = cpphase!
 
 function PMNSMatrix(osc_params::OscillationParameters)
 """
