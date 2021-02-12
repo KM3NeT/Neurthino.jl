@@ -1,4 +1,4 @@
-@enum NeutrinoFlavor begin
+@enum NeutrinoFlavour begin
   Electron = 1
   Muon = 2
   Tau = 3
@@ -7,14 +7,14 @@ end
 
 struct OscillationParameters{T}
     mixing_angles::Array{T,2}
-    mass_squared_diff::Array{T,2}
+    mass_squared_diff::SparseMatrixCSC{T,<:Integer}
     cp_phases::Array{T,2}
     dim::Int64
 
     OscillationParameters(dim::Int64) = begin
-        new{Float64}(
+        new{ComplexF64}(
                 zeros(dim, dim),
-                zeros(dim, dim),
+                spzeros(dim, dim),
                 zeros(dim, dim),
                 dim)
     end
@@ -40,10 +40,10 @@ Set a mixing angle of an oscillation parameters struct
 # Arguments
 - `osc::OscillationParameters`: Oscillation parameters 
 - `indices::Pair{<:Integer, <:Integer}`: The indices of the mixing angle
-- `value` The value which should be applied to the oscillation parameters
+- `value<:Real` The value which should be applied to the oscillation parameters
 
 """
-function mixingangle!(osc::OscillationParameters, indices::Pair{T, T}, value) where {T <: Integer}
+function mixingangle!(osc::OscillationParameters, indices::Pair{T, T}, value::S) where {T <: Integer, S <: Real}
     fromidx = first(indices)
     toidx = last(indices)
     if fromidx < toidx
@@ -51,6 +51,58 @@ function mixingangle!(osc::OscillationParameters, indices::Pair{T, T}, value) wh
     else
         osc.mixing_angles[toidx, fromidx] = value
     end
+end
+
+"""
+$(SIGNATURES)
+
+Set a mixing angle of an oscillation parameters struct
+
+# Arguments
+- `osc::OscillationParameters`: Oscillation parameters 
+- `args::Tuple{Pair{<:Integer, <:Integer}, <:Real}`: The indices of the mixing angle
+
+"""
+function mixingangle!(osc::OscillationParameters, (args::Tuple{Pair{T, T}, S})...) where {T <: Integer, S<: Real}
+    for a in args
+        mixingangle!(osc, first(a), last(a))
+    end
+end
+
+const setθ! = mixingangle!
+
+function _mass_matrix_fully_determined(osc::OscillationParameters)
+    I, J, _ = findnz(osc.mass_squared_diff)
+    set_elements = collect(zip(I, J))
+    indices = Set([first.(set_elements)..., last.(set_elements)...])
+    length(indices) >= osc.dim & length(set_elements) >= (osc.dim - 1)  
+end
+
+function _mass_matrix_overdetermined(osc::OscillationParameters)
+    I, J, _ = findnz(osc.mass_squared_diff)
+    set_elements = collect(zip(I, J))
+    indices = Set([first.(set_elements)..., last.(set_elements)...])
+    length(set_elements) >= length(indices) 
+end
+
+function _completed_mass_matrix(osc::OscillationParameters)
+    tmp = Matrix(osc.mass_squared_diff)
+    tmp = tmp - transpose(tmp)
+    if _mass_matrix_fully_determined(osc)
+        I, J, _ = findnz(osc.mass_squared_diff)
+        given_idx = collect(zip(I, J))
+        wanted_idx = filter(x->(x[1] < x[2]) & (x ∉ given_idx), collect(product(1:osc.dim, 1:osc.dim)))
+        graph = SimpleDiGraph(map(x->x!=0.0, tmp))
+        for (from, to) in wanted_idx
+            path = a_star(graph, from, to)
+            for edge in path
+                tmp[from, to] += tmp[edge.src, edge.dst]
+            end
+        end
+    else
+        error("Mass squared differences not fully determined!")
+    end
+    UpperTriangular(tmp)
 end
 
 """
@@ -64,7 +116,7 @@ Set a mass squared difference of an oscillation parameters struct
 - `value` The value which should be applied to the oscillation parameters
 
 """
-function masssquareddiff!(osc::OscillationParameters, indices::Pair{T, T}, value) where {T <: Integer}
+function masssquareddiff!(osc::OscillationParameters, indices::Pair{T, T}, value::S) where {T <: Integer, S <: Number}
     fromidx = first(indices)
     toidx = last(indices)
     if fromidx < toidx
@@ -72,7 +124,28 @@ function masssquareddiff!(osc::OscillationParameters, indices::Pair{T, T}, value
     else
         osc.mass_squared_diff[toidx, fromidx] = -value
     end
+    if _mass_matrix_overdetermined(osc)
+        @warn "Mass squared difference fields (partially) overdetermined!"
+    end
 end
+
+"""
+$(SIGNATURES)
+
+Set a mass squared difference of an oscillation parameters struct
+
+# Arguments
+- `osc::OscillationParameters`: Oscillation parameters 
+- `args::Tuple{Pair{<:Integer, <:Integer}, <:Number}`: Indices and values of the mass squared difference
+
+"""
+function masssquareddiff!(osc::OscillationParameters, (args::Tuple{Pair{<:Integer, <:Integer}, <:Number})...)
+    for a in args
+        masssquareddiff!(osc, first(a), last(a))
+    end
+end
+
+const Δm²! = masssquareddiff!
 
 """
 $(SIGNATURES)
@@ -85,7 +158,7 @@ Set a CP phase of an oscillation parameters struct
 - `value` The value which should be applied to the oscillation parameters
 
 """
-function cpphase!(osc::OscillationParameters, indices::Pair{T, T}, value) where {T <: Integer}
+function cpphase!(osc::OscillationParameters, indices::Pair{T, T}, value::S) where {T <: Integer, S <: Real}
     fromidx = first(indices)
     toidx = last(indices)
     if fromidx < toidx
@@ -95,7 +168,23 @@ function cpphase!(osc::OscillationParameters, indices::Pair{T, T}, value) where 
     end
 end
 
+"""
+$(SIGNATURES)
 
+Set a CP phase of an oscillation parameters struct
+
+# Arguments
+- `osc::OscillationParameters`: Oscillation parameters 
+- `args::Tuple{Pair{<:Integer, <:Integer}, <:Number}`: Indices and values of the CP phase
+
+"""
+function cpphase!(osc::OscillationParameters, (args::Tuple{Pair{T, T}, S})...) where {T <: Integer, S <: Real}
+    for a in args
+        cpphase!(osc, first(a), last(a))
+    end
+end
+
+const setδ! = cpphase!
 
 function PMNSMatrix(osc_params::OscillationParameters)
 """
@@ -155,13 +244,14 @@ based on the given oscillation parameters
 - `lambda`:                             Decay parameters for each mass eigenstate
 
 """
+    full_mass_squared_matrix = _completed_mass_matrix(osc_params)
     H = zeros(ComplexF64, osc_params.dim)
     for i in 1:osc_params.dim
         for j in 1:osc_params.dim
             if i < j
-                H[i] += osc_params.mass_squared_diff[i,j]
+                H[i] += full_mass_squared_matrix[i,j]
             elseif j < i
-                H[i] -= osc_params.mass_squared_diff[j,i]
+                H[i] -= full_mass_squared_matrix[j,i]
             end
         end
         H[i] += 1im * lambda[i]
@@ -217,15 +307,18 @@ Calculate the transistion probabilities between the neutrino flavours
 
 # Arguments
 - `osc_params::OscillationParameters`:  Oscillation parameters
+- `flavours::Pair{Union{NeutrinoFlavour, Integer}, Union{NeutrinoFlavour, Integer}}`: Pair indicating the initial and final flavour
 - `energy`:                             Baseline [km]
 - `baseline`:                           Energy [GeV]
 
 """
-function transprob(osc_params::OscillationParameters, flavors::Pair{T, T}, energy, baseline) where {T <: Union{NeutrinoFlavor, Integer}}
+function transprob(osc_params::OscillationParameters, flavors::Pair{T, T}, energy, baseline) where {T <: Union{NeutrinoFlavour, Integer}}
     fromflavor = Int(first(flavors))
     toflavor = Int(last(flavors))
     transprob(osc, energy, baseline)[fromflavor, toflavor]
 end
+
+const Pνν = transprob
 
 """
 $(SIGNATURES)

@@ -22,30 +22,28 @@ julia> using Neurthino
 
 julia> osc = OscillationParameters(3);
 ```
-The values of the mixing angles, mass squared differences and CP phases are 
+The values of the mixing angles (setθ!), mass squared differences (Δm²) and CP phases (setδ!) are 
 initialised to 0 and have to be set individually.
 ```
-julia> mixingangle!(osc, 1=>2, 0.59);
+julia> setθ!(osc, 1=>2, 0.59);
 
-julia> mixingangle!(osc, 1=>3, 0.15);
+julia> setθ!(osc, 1=>3, 0.15);
 
-julia> mixingangle!(osc, 2=>3, 0.84);
+julia> setθ!(osc, 2=>3, 0.84);
 
-julia> cpphase!(osc, 1=>3, 3.86);
+julia> setδ!(osc, 1=>3, 3.86);
 ```
 The mass squared differences are defined as <img src="https://render.githubusercontent.com/render/math?math=\Delta_{ij}=m_i^2-m_j^2"> and
 within the package the convention <img src="https://render.githubusercontent.com/render/math?math=\forall%20i%3Cj:m_i%3Cm_j"> is kept.
 ```
-julia> masssquareddiff!(osc, 2=>3, -2.523e-3);
+julia> Δm²!(osc, 2=>3, -2.523e-3);
 
-julia> masssquareddiff!(osc, 1=>2, -7.39e-5);
-
-julia> masssquareddiff!(osc, 1=>3, -2.523e-3-7.39e-5);
+julia> Δm²!(osc, 1=>2, -7.39e-5);
 ```
 These oscillation parameters can now be used in order to calculate the transition
 probabilities between the flavour states. 
 ```
-julia> transprob(osc, 1, 10000)
+julia> Pνν(osc, 1, 10000)
 3×3 Array{Float64,2}:
  0.684582  0.0964727  0.218946
  0.059416  0.790557   0.150027
@@ -54,7 +52,7 @@ julia> transprob(osc, 1, 10000)
 The probabilities are calculated based on the transition matrix 
 (the so-called PMNS-Matrix) between flavour and mass eigenstates,
 as well as the Hamiltonian in the mass eigenbasis. In order to calculating these 
-just once, the `transprob` function can also be called in the following way:
+just once, the `Pνν` function can also be called in the following way:
 ```
 julia> U = PMNSMatrix(osc)
 3×3 Array{Complex,2}:
@@ -68,7 +66,7 @@ julia> H = Hamiltonian(osc)
   [2]  =  -0.000816367
   [3]  =  0.001682
 
-julia> transprob(U, H, 1, 10000)
+julia> Pνν(U, H, 1, 10000)
 3×3 Array{Float64,2}:
  0.684582  0.0964727  0.218946
  0.059416  0.790557   0.150027
@@ -91,10 +89,10 @@ julia> U_mat
  -0.665633+0.00279569im  0.287503+0.2445im     0.643807+0.0im       
   0.746182+0.0im         0.241939+0.219159im   0.580206-0.00274678im
 ```
-The transition probabilities can then be calculated using the `transprob` function
+The transition probabilities can then be calculated using the `Pνν` function
 again.
 ```
-julia> transprob(U_mat, H_mat, 1, 10000)
+julia> Pνν(U_mat, H_mat, 1, 10000)
 3×3 Array{Float64,2}:
  0.252869  0.428127  0.319004
  0.414751  0.306335  0.278914
