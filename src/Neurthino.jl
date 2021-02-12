@@ -11,7 +11,7 @@ using LightGraphs
 using IterTools
 
 export transprob, Pνν, Pνν, OscillationParameters, PMNSMatrix, Hamiltonian, MatterOscillationMatrices
-export masssquareddiff!, Δm²!, cpphase!, δ!, mixingangle!, θ!
+export masssquareddiff!, setΔm²!, cpphase!, setδ!, mixingangle!, setθ!
 
 export NeutrinoFlavor, Electron, Muon, Tau
 

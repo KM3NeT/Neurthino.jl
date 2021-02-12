@@ -145,7 +145,7 @@ function masssquareddiff!(osc::OscillationParameters, (args::Tuple{Pair{<:Intege
     end
 end
 
-const Δm²! = masssquareddiff!
+const setΔm²! = masssquareddiff!
 
 """
 $(SIGNATURES)
