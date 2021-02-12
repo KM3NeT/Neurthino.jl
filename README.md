@@ -22,14 +22,16 @@ julia> using Neurthino
 
 julia> osc = OscillationParameters(3);
 ```
-The values of the mixing angles (θ), mass squared differences (Δm²) and CP phases (δ) are 
+The values of the mixing angles (setθ!), mass squared differences (Δm²) and CP phases (setδ!) are 
 initialised to 0 and have to be set individually.
 ```
-julia> θ!(osc, 1=>2, 0.59);
+julia> setθ!(osc, 1=>2, 0.59);
 
-julia> θ!(osc, 2=>3, 0.84);
+julia> setθ!(osc, 1=>3, 0.15);
 
-julia> δ!(osc, 1=>3, 3.86);
+julia> setθ!(osc, 2=>3, 0.84);
+
+julia> setδ!(osc, 1=>3, 3.86);
 ```
 The mass squared differences are defined as <img src="https://render.githubusercontent.com/render/math?math=\Delta_{ij}=m_i^2-m_j^2"> and
 within the package the convention <img src="https://render.githubusercontent.com/render/math?math=\forall%20i%3Cj:m_i%3Cm_j"> is kept.
@@ -37,8 +39,6 @@ within the package the convention <img src="https://render.githubusercontent.com
 julia> Δm²!(osc, 2=>3, -2.523e-3);
 
 julia> Δm²!(osc, 1=>2, -7.39e-5);
-
-julia> Δm²!(osc, 1=>3, -2.523e-3-7.39e-5);
 ```
 These oscillation parameters can now be used in order to calculate the transition
 probabilities between the flavour states. 
