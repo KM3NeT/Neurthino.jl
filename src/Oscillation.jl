@@ -318,48 +318,7 @@ function transprob(osc_params::OscillationParameters, flavors::Pair{T, T}, energ
     transprob(osc, energy, baseline)[fromflavor, toflavor]
 end
 
-
-"""
-$(SIGNATURES)
-
-Calculate the transistion probabilities between the neutrino flavours
-
-# Arguments
-- `U`:          Unitary transition matrix
-- `H`:          Energy eigenvalues
-- `energy`:     Baseline [km]
-- `baseline`:   Energy [GeV]
-
-"""
-Pνν(U, H, energy, baseline) = transprob(U, H, energy, baseline)  
-
-
-"""
-$(SIGNATURES)
-
-Calculate the transistion probabilities between the neutrino flavours
-
-# Arguments
-- `osc_params::OscillationParameters`:  Oscillation parameters
-- `energy`:                             Baseline [km]
-- `baseline`:                           Energy [GeV]
-
-"""
-Pνν(osc_params, energy, baseline) = transprob(osc_params, energy, baseline)  
-
-"""
-$(SIGNATURES)
-
-Calculate the transistion probabilities between the neutrino flavours
-
-# Arguments
-- `osc_params::OscillationParameters`:  Oscillation parameters
-- `flavours::Pair{Union{NeutrinoFlavour, Integer}, Union{NeutrinoFlavour, Integer}}`: Pair indicating the initial and final flavour
-- `energy`:                             Baseline [km]
-- `baseline`:                           Energy [GeV]
-
-"""
-Pνν(osc_params, flavours::Pair{T, T}, energy, baseline) where {T <: Union{NeutrinoFlavour, Integer}} = transprob(osc_params, flavours, energy, baseline)  
+const Pνν = transprob
 
 """
 $(SIGNATURES)
