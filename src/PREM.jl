@@ -76,6 +76,7 @@ $(SIGNATURES)
 - `zenith::Vector{Float64}`: Zenith angles of the paths with respect to the detector frame [rad]
 - `zposition::Float64` Distance below the surface of the Earth (positive value) [km]
 - `samples` The number of steps with equal distance
+- `discrete_densities` List of density values to be used for discretization
 """
     map(z->prempath(z, zposition; samples=samples, discrete_densities=discrete_densities), zenith)
 end
