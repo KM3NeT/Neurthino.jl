@@ -44,9 +44,9 @@ probabilities between the flavour states.
 ```
 julia> Pνν(osc, 1, 10000)
 3×3 Array{Float64,2}:
- 0.684582  0.0964727  0.218946
- 0.059416  0.790557   0.150027
- 0.256002  0.11297    0.631027
+ 0.402703  0.24862   0.348676
+ 0.100207  0.491245  0.408548
+ 0.49709   0.260134  0.242776
 ```
 The probabilities are calculated based on the transition matrix 
 (the so-called PMNS-Matrix) between flavour and mass eigenstates,
@@ -60,21 +60,21 @@ julia> U = PMNSMatrix(osc)
   0.476688+0.0545516im  -0.576975+0.0365253im   0.659968+0.0im
 
 julia> H = Hamiltonian(osc)
-3-element SparseArrays.SparseVector{Float64,Int64} with 3 stored entries:
-  [1]  =  -0.000865633
-  [2]  =  -0.000816367
-  [3]  =  0.001682
+3-element Array{Complex{Float64},1}:
+ -0.0008902666666666667 + 0.0im
+ -0.0008163666666666667 + 0.0im
+  0.0017066333333333333 + 0.0im
 
 julia> Pνν(U, H, 1, 10000)
 3×3 Array{Float64,2}:
- 0.684582  0.0964727  0.218946
- 0.059416  0.790557   0.150027
- 0.256002  0.11297    0.631027
+ 0.402703  0.24862   0.348676
+ 0.100207  0.491245  0.408548
+ 0.49709   0.260134  0.242776
 ```
 For the neutrino propagation through matter a modified PMNS-Matrix and Hamiltonian
 have to be determined, which requires the neutrino energy and the matter density. 
 ```
-julia> H_mat, U_mat = MatterOscillationMatrices(U, H, 1, 13);
+julia> U_mat, H_mat = MatterOscillationMatrices(U, H, 1, 13);
 
 julia> H_mat
 3-element Array{Complex{Float64},1}:
@@ -84,18 +84,18 @@ julia> H_mat
 
 julia> U_mat
 3×3 Array{Complex{Float64},2}:
- 0.0117205-2.18724e-5im    0.8666+0.0im       -0.374878+0.32914im   
- -0.665633+0.00279569im  0.287503+0.2445im     0.643807+0.0im       
-  0.746182+0.0im         0.241939+0.219159im   0.580206-0.00274678im
+  0.0358018-0.000158113im  0.970863+0.0im       -0.178275+0.156083im
+ -0.662778+0.00661213im    0.157174+0.116074im   0.722845+0.0im
+  0.74793+0.0im            0.0917808+0.104043im  0.649115-0.00104331im
 ```
 The oscillation probabilities can then be calculated using the `Pνν` function
 again.
 ```
 julia> Pνν(U_mat, H_mat, 1, 10000)
 3×3 Array{Float64,2}:
- 0.252869  0.428127  0.319004
- 0.414751  0.306335  0.278914
- 0.33238   0.265538  0.402082
+ 0.834273   0.082774   0.0829533
+ 0.108105   0.0522763  0.839619
+ 0.0576223  0.86495    0.077428
 ```
 
 ### Neutrino propagation through the Earth
