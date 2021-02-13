@@ -13,7 +13,7 @@
 The main focus of the package lies on atmospheric neutrino flux and the neutrino
 propagation through earth.
 
-### Usage
+### Basic Usage
 First of all the basic vacuum properties have to be defined via creating a
 `OscillationParameters` struct with fixed number of neutrino flavours of the 
 considered model.
@@ -98,6 +98,33 @@ julia> Pνν(U_mat, H_mat, 1, 10000)
  0.33238   0.265538  0.402082
 ```
 
+### Neutrino propagation through the Earth
+
+The `Neurthino.jl` package also includes features for the neutrino oscillation probabilities
+through the Earth, i.e. it contains functions for generating a neutrino path based on the
+PREM model. In the following example a neutrino oscillogram with a resolution 200x200 bins
+is generated. Thus, the zenith angles for up going neutrinos (cos(θ)ϵ[-1,0]) and 
+subsequently the neutrino paths are setup first.
+```
+julia> zenith = acos.(range(-1,stop=0,length=200));
+
+julia> paths = Neurthino.prempath(zenith, 2.5, samples=100, discrete_densities=0:0.1:14);
+```
+The detector is assumed to be 2.5km under the earth's surface, which is the case for 
+Water-Cherenkov-Detectors in sea or ice. Each path consists of 100 sections and the 
+density gain from the PREM model is rounded to the closest value in `discete_densities`.
+The oscillation probabilities can be calculated now.
+```
+julia> energies = 10 .^ range(0, stop=2, length=200);
+
+julia> prob = Pνν(U, H, energies, paths);
+```
+The returned array `prob` is 4 dimensional, where the first & second dimension holds energy & zenith
+and the third & fourth dimension yield the initial & final flavour of the transition.
+P(νe&#8594;νe) is determined by `prob[:,:,1,1]`, which can be visualised by a `heatmap`:
+![](https://github.com/KM3NeT/Neurthino.jl/raw/master/docs/src/assets/earth_prob_elel.png)
+and for P(νμ&#8594;νμ):
+![](https://github.com/KM3NeT/Neurthino.jl/raw/master/docs/src/assets/earth_prob_mumu.png)
 <!-- ```@index -->
 <!-- ``` -->
 <!--  -->
