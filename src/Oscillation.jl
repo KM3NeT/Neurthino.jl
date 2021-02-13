@@ -274,8 +274,8 @@ Calculate the transistion probabilities between the neutrino flavours
 # Arguments
 - `U`:          Unitary transition matrix
 - `H`:          Energy eigenvalues
-- `energy`:     Baseline [km]
-- `baseline`:   Energy [GeV]
+- `energy`:     Energy [GeV]
+- `baseline`:   Baseline [km]
 
 """
 function oscprob(U, H, energy, baseline)  
@@ -290,8 +290,8 @@ Calculate the transistion probabilities between the neutrino flavours
 
 # Arguments
 - `osc_params::OscillationParameters`:  Oscillation parameters
-- `energy`:                             Baseline [km]
-- `baseline`:                           Energy [GeV]
+- `energy`:                             Energy [GeV]
+- `baseline`:                           Baseline [km]
 
 """
 function oscprob(osc_params::OscillationParameters, energy, baseline)  
@@ -308,9 +308,8 @@ Calculate the transistion probabilities between the neutrino flavours
 # Arguments
 - `osc_params::OscillationParameters`:  Oscillation parameters
 - `flavours::Pair{Union{NeutrinoFlavour, Integer}, Union{NeutrinoFlavour, Integer}}`: Pair indicating the initial and final flavour
-- `energy`:                             Baseline [km]
-- `baseline`:                           Energy [GeV]
-
+- `energy`:                             Energy [GeV]
+- `baseline`:                           Baseline [km]
 """
 function oscprob(osc_params::OscillationParameters, flavors::Pair{T, T}, energy, baseline) where {T <: Union{NeutrinoFlavour, Integer}}
     fromflavor = Int(first(flavors))

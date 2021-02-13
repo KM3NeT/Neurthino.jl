@@ -72,9 +72,9 @@ julia> Pνν(U, H, 1, 10000)
  0.256002  0.11297    0.631027
 ```
 For the neutrino propagation through matter a modified PMNS-Matrix and Hamiltonian
-has to be determined. The matter is parametrised by its density. 
+have to be determined, which requires the neutrino energy and the matter density. 
 ```
-julia> H_mat, U_mat = MatterOscillationMatrices(U, H, 13);
+julia> H_mat, U_mat = MatterOscillationMatrices(U, H, 1, 13);
 
 julia> H_mat
 3-element Array{Complex{Float64},1}:
