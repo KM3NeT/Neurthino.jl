@@ -39,7 +39,7 @@ julia> setΔm²!(osc, 2=>3, -2.523e-3);
 
 julia> setΔm²!(osc, 1=>2, -7.39e-5);
 ```
-These oscillation parameters can now be used in order to calculate the transition
+These oscillation parameters can now be used in order to calculate the oscillation
 probabilities between the flavour states. 
 ```
 julia> Pνν(osc, 1, 10000)
@@ -88,7 +88,7 @@ julia> U_mat
  -0.665633+0.00279569im  0.287503+0.2445im     0.643807+0.0im       
   0.746182+0.0im         0.241939+0.219159im   0.580206-0.00274678im
 ```
-The transition probabilities can then be calculated using the `Pνν` function
+The oscillation probabilities can then be calculated using the `Pνν` function
 again.
 ```
 julia> Pνν(U_mat, H_mat, 1, 10000)
@@ -103,24 +103,22 @@ julia> Pνν(U_mat, H_mat, 1, 10000)
 The `Neurthino.jl` package also includes features for the neutrino oscillation probabilities
 through the Earth, i.e. it contains functions for generating a neutrino path based on the
 PREM model. In the following example a neutrino oscillogram with a resolution 200x200 bins
-is generated. Thus, the zenith angles for up going neutrinos (cos(θ)ϵ[-1,0]) and 
-subsequently the neutrino paths are setup first.
+is determined. Thus, the zenith angles for up going neutrinos (cos(θ)ϵ[-1,0]) and 
+subsequently the neutrino paths are generated first.
 ```
 julia> zenith = acos.(range(-1,stop=0,length=200));
 
 julia> paths = Neurthino.prempath(zenith, 2.5, samples=100, discrete_densities=0:0.1:14);
 ```
-The detector is assumed to be 2.5km under the earth's surface, which is the case for 
-Water-Cherenkov-Detectors in sea or ice. Each path consists of 100 sections and the 
-density gain from the PREM model is rounded to the closest value in `discete_densities`.
-The oscillation probabilities can be calculated now.
+The detector is assumed to be 2.5km under the earth's surface, which is a realistic scenario
+for Water-Cherenkov-Detectors in sea or ice. Each path consists of 100 sections of equal length and the density is taken from the PREM model. If a vector with densities is passed via `discete_densities`, the density values in paths are rounded to the closest value 
+in the given vector. The oscillation probabilities can be calculated now.
 ```
 julia> energies = 10 .^ range(0, stop=2, length=200);
 
 julia> prob = Pνν(U, H, energies, paths);
 ```
-The returned array `prob` is 4 dimensional, where the first & second dimension holds energy & zenith
-and the third & fourth dimension yield the initial & final flavour of the transition.
+The returned array `prob` is 4 dimensional, where the first & second dimension holds energy & path, which is in this example connected to the zenith angles. The third & fourth dimension of `prob` yield the initial & final flavour of the oscillation.
 P(νe&#8594;νe) is determined by `prob[:,:,1,1]`, which can be visualised by a `heatmap`:<br />
 <!-- ![](https://github.com/KM3NeT/Neurthino.jl/raw/master/docs/src/assets/earth_prob_elel.png) -->
 ![](https://github.com/KM3NeT/Neurthino.jl/raw/fancy-readme/docs/src/assets/earth_prob_elel.png) <br />
