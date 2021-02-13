@@ -15,7 +15,7 @@ Neurthino.masssquareddiff!(osc, 1=>2,-7.39e-5)
 U = Neurthino.PMNSMatrix(osc)
 H = Neurthino.Hamiltonian(osc)
 
-test_values = Neurthino.transprob(U, H, 1, 1.6e4)
+test_values = Neurthino.oscprob(U, H, 1, 1.6e4)
 @test test_values[1,1] ≈ 0.142 atol=0.01 
 @test test_values[1,2] ≈ 0.420 atol=0.01 
 @test test_values[1,3] ≈ 0.438 atol=0.01 
@@ -26,7 +26,7 @@ test_values = Neurthino.transprob(U, H, 1, 1.6e4)
 Neurthino.masssquareddiff!(osc, 3=>2, 2.523e-3)
 Neurthino.masssquareddiff!(osc, 2=>1, 7.39e-5)
 
-test_values = Neurthino.transprob(osc, 1, 1.6e4)
+test_values = Neurthino.oscprob(osc, 1, 1.6e4)
 @test test_values[1,1] ≈ 0.142 atol=0.01 
 @test test_values[1,2] ≈ 0.420 atol=0.01 
 @test test_values[1,3] ≈ 0.438 atol=0.01 
@@ -41,7 +41,7 @@ H = Neurthino.Hamiltonian(osc)
 
 U_mat, H_mat = Neurthino.MatterOscillationMatrices(U, H, 13.0, 1.0)
 
-matter_test_values = Neurthino.transprob(U_mat, H_mat, 1, 1.0e4)
+matter_test_values = Neurthino.oscprob(U_mat, H_mat, 1, 1.0e4)
 @test test_values[1,1] ≈ 0.142 atol=0.01 
 @test test_values[1,2] ≈ 0.420 atol=0.01 
 @test test_values[1,3] ≈ 0.438 atol=0.01 
@@ -51,7 +51,7 @@ matter_test_values = Neurthino.transprob(U_mat, H_mat, 1, 1.0e4)
 
 U_mat, H_mat = Neurthino.MatterOscillationMatrices(osc, 13.0, 1.0)
 
-matter_test_values = Neurthino.transprob(U_mat, H_mat, 1, 1.0e4)
+matter_test_values = Neurthino.oscprob(U_mat, H_mat, 1, 1.0e4)
 @test test_values[1,1] ≈ 0.142 atol=0.01 
 @test test_values[1,2] ≈ 0.420 atol=0.01 
 @test test_values[1,3] ≈ 0.438 atol=0.01 

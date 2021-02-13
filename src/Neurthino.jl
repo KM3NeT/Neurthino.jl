@@ -10,7 +10,7 @@ using LRUCache
 using LightGraphs
 using IterTools
 
-export transprob, Pνν, Pνν, OscillationParameters, PMNSMatrix, Hamiltonian, MatterOscillationMatrices
+export oscprob, Pνν, Pνν, OscillationParameters, PMNSMatrix, Hamiltonian, MatterOscillationMatrices
 export masssquareddiff!, setΔm²!, cpphase!, setδ!, mixingangle!, setθ!
 
 export NeutrinoFlavor, Electron, Muon, Tau

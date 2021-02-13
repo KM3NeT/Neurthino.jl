@@ -82,13 +82,13 @@ $(SIGNATURES)
 - `zoa`: Proton nucleon ratio (Z/A)
 - `anti`: Is anti neutrino
 """
-function transprob(osc_vacuum::OscillationParameters, energy, paths::Vector{Path{Float64}}; zoa=0.5, anti=false)
+function oscprob(osc_vacuum::OscillationParameters, energy, paths::Vector{Path{Float64}}; zoa=0.5, anti=false)
     # TODO: attach U_vac and H_vac to the oscillation parameters, so that it's
     # only calculated once and invalidated when any of the oscillation parameters
     # are changed
     U_vac = PMNSMatrix(osc_vacuum)
     H_vac = Hamiltonian(osc_vacuum)
-    transprob(U_vac, H_vac, energy, densities, baselines; zoa=zoa, anti=anti)
+    oscprob(U_vac, H_vac, energy, densities, baselines; zoa=zoa, anti=anti)
 end
 
 
@@ -103,7 +103,7 @@ $(SIGNATURES)
 - `zoa`: Proton nucleon ratio (Z/A)
 - `anti`: Is anti neutrino
 """
-function transprob(U, H, energies, paths::Vector{Path{Float64}}; zoa=0.5, anti=false)
+function oscprob(U, H, energies, paths::Vector{Path{Float64}}; zoa=0.5, anti=false)
     H_eff = U * Diagonal{ComplexF64}(H) * adjoint(U)
     A = zeros(ComplexF64, length(energies), length(paths), size(U)...)
     cache_size = length(energies) * sum(map(x->length(x.density), paths)) 
@@ -118,7 +118,7 @@ function transprob(U, H, energies, paths::Vector{Path{Float64}}; zoa=0.5, anti=f
                 U_mat, H_mat = get!(lru, (E, ρ)) do
                     MatterOscillationMatrices(copy(H_eff), E, ρ; zoa=zoa, anti=anti)
                 end  
-                tmp *= Neurthino._transprobampl(U_mat, H_mat, E, b)
+                tmp *= Neurthino._oscprobampl(U_mat, H_mat, E, b)
             end
             @inbounds A[k, l,  :, :] = tmp        
         end

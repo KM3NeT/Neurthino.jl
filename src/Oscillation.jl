@@ -261,7 +261,7 @@ based on the given oscillation parameters
 end
 
 
-function _transprobampl(U, H, energy, baseline)  
+function _oscprobampl(U, H, energy, baseline)  
     H_diag = 2.534 * Diagonal{ComplexF64}(H) * baseline / energy 
     U * exp(-1im * H_diag) * adjoint(U)
 end
@@ -278,8 +278,8 @@ Calculate the transistion probabilities between the neutrino flavours
 - `baseline`:   Energy [GeV]
 
 """
-function transprob(U, H, energy, baseline)  
-    A = _transprobampl(U, H, energy, baseline)
+function oscprob(U, H, energy, baseline)  
+    A = _oscprobampl(U, H, energy, baseline)
     P = abs.(A) .^ 2
 end
 
@@ -294,10 +294,10 @@ Calculate the transistion probabilities between the neutrino flavours
 - `baseline`:                           Energy [GeV]
 
 """
-function transprob(osc_params::OscillationParameters, energy, baseline)  
+function oscprob(osc_params::OscillationParameters, energy, baseline)  
     H = Hamiltonian(osc_params)
     U = PMNSMatrix(osc_params)
-    transprob(U, H, energy, baseline)
+    oscprob(U, H, energy, baseline)
 end
 
 """
@@ -312,13 +312,13 @@ Calculate the transistion probabilities between the neutrino flavours
 - `baseline`:                           Energy [GeV]
 
 """
-function transprob(osc_params::OscillationParameters, flavors::Pair{T, T}, energy, baseline) where {T <: Union{NeutrinoFlavour, Integer}}
+function oscprob(osc_params::OscillationParameters, flavors::Pair{T, T}, energy, baseline) where {T <: Union{NeutrinoFlavour, Integer}}
     fromflavor = Int(first(flavors))
     toflavor = Int(last(flavors))
-    transprob(osc, energy, baseline)[fromflavor, toflavor]
+    oscprob(osc, energy, baseline)[fromflavor, toflavor]
 end
 
-const Pνν = transprob
+const Pνν = oscprob
 
 """
 $(SIGNATURES)
