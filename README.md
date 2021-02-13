@@ -120,11 +120,9 @@ julia> prob = Pνν(U, H, energies, paths);
 ```
 The returned array `prob` is 4 dimensional, where the first & second dimension holds energy & path, which is in this example connected to the zenith angles. The third & fourth dimension of `prob` yield the initial & final flavour of the oscillation.
 P(νe&#8594;νe) is determined by `prob[:,:,1,1]`, which can be visualised by a `heatmap`:<br />
-<!-- ![](https://github.com/KM3NeT/Neurthino.jl/raw/master/docs/src/assets/earth_prob_elel.png) -->
-![](https://github.com/KM3NeT/Neurthino.jl/raw/fancy-readme/docs/src/assets/earth_prob_elel.png) <br />
+![](https://github.com/KM3NeT/Neurthino.jl/raw/master/docs/src/assets/earth_prob_elel.png) <br />
 and for P(νμ&#8594;νμ):<br />
-<!-- ![](https://github.com/KM3NeT/Neurthino.jl/raw/master/docs/src/assets/earth_prob_mumu.png) -->
-![](https://github.com/KM3NeT/Neurthino.jl/raw/fancy-readme/docs/src/assets/earth_prob_mumu.png)
+![](https://github.com/KM3NeT/Neurthino.jl/raw/master/docs/src/assets/earth_prob_mumu.png)
 <!-- ```@index -->
 <!-- ``` -->
 <!--  -->
