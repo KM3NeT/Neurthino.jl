@@ -121,10 +121,10 @@ julia> prob = Pνν(U, H, energies, paths);
 ```
 The returned array `prob` is 4 dimensional, where the first & second dimension holds energy & zenith
 and the third & fourth dimension yield the initial & final flavour of the transition.
-P(νe&#8594;νe) is determined by `prob[:,:,1,1]`, which can be visualised by a `heatmap`:
+P(νe&#8594;νe) is determined by `prob[:,:,1,1]`, which can be visualised by a `heatmap`:<br />
 <!-- ![](https://github.com/KM3NeT/Neurthino.jl/raw/master/docs/src/assets/earth_prob_elel.png) -->
-![](https://github.com/KM3NeT/Neurthino.jl/raw/fancy-readme/docs/src/assets/earth_prob_elel.png)
-and for P(νμ&#8594;νμ):
+![](https://github.com/KM3NeT/Neurthino.jl/raw/fancy-readme/docs/src/assets/earth_prob_elel.png) <br />
+and for P(νμ&#8594;νμ):<br />
 <!-- ![](https://github.com/KM3NeT/Neurthino.jl/raw/master/docs/src/assets/earth_prob_mumu.png) -->
 ![](https://github.com/KM3NeT/Neurthino.jl/raw/fancy-readme/docs/src/assets/earth_prob_mumu.png)
 <!-- ```@index -->
