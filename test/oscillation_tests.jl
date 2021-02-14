@@ -60,3 +60,14 @@ matter_test_values = Neurthino.oscprob(U_mat, H_mat, 1, 1.0e4)
 @test test_values[3,3] ≈ 0.239 atol=0.01 
 
 @test_logs (:warn, "Mass squared difference fields (partially) overdetermined!") Neurthino.masssquareddiff!(osc, 3=>1, 1)
+
+for i in 3:100
+    osc_params_dims = Neurthino.OscillationParameters(i)
+    @test_throws ErrorException("Mass squared difference with equal index cannot be modified.") setΔm²!(osc_params_dims, 1=>1, 1) 
+    for j in 1:i-1
+        @test_throws ErrorException("Mass squared differences not fully determined!") Hamiltonian(osc_params_dims)
+        Neurthino.masssquareddiff!(osc_params_dims, j=>j+1, 1.0)
+    @test_logs (:warn, "Mass squared difference fields (partially) overdetermined!") Neurthino.masssquareddiff!(osc, 3=>1, 1)
+    end
+end
+
