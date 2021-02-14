@@ -121,6 +121,8 @@ function masssquareddiff!(osc::OscillationParameters, indices::Pair{T, T}, value
     toidx = last(indices)
     if fromidx < toidx
         osc.mass_squared_diff[fromidx, toidx] = value
+    elseif fromidx == toidx
+        error("Mass squared difference with equal index cannot be modified.")
     else
         osc.mass_squared_diff[toidx, fromidx] = -value
     end
