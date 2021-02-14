@@ -75,7 +75,7 @@ function _mass_matrix_fully_determined(osc::OscillationParameters)
     I, J, _ = findnz(osc.mass_squared_diff)
     set_elements = collect(zip(I, J))
     indices = Set([first.(set_elements)..., last.(set_elements)...])
-    length(indices) >= osc.dim & length(set_elements) >= (osc.dim - 1)  
+    (length(indices) >= osc.dim) & (length(set_elements) >= (osc.dim - 1))  
 end
 
 function _mass_matrix_overdetermined(osc::OscillationParameters)
@@ -91,7 +91,7 @@ function _completed_mass_matrix(osc::OscillationParameters)
     if _mass_matrix_fully_determined(osc)
         I, J, _ = findnz(osc.mass_squared_diff)
         given_idx = collect(zip(I, J))
-        wanted_idx = filter(x->(x[1] < x[2]) & (x ∉ given_idx), collect(product(1:osc.dim, 1:osc.dim)))
+        wanted_idx = filter(x->(x[1] < x[2]) & (x ∉ given_idx), collect(Iterators.product(1:osc.dim, 1:osc.dim)))
         graph = SimpleDiGraph(map(x->x!=0.0, tmp))
         for (from, to) in wanted_idx
             path = a_star(graph, from, to)
