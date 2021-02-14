@@ -1,9 +1,9 @@
-struct Path{T}
-    density::Vector{T}
-    baseline::Vector{T}
+struct Path
+    density::Vector{Float64}
+    baseline::Vector{Float64}
 end
 
-Path(density::Float64, baseline::Float64) = Path{Float64}([density],[baseline])
+Path(density::Number, baseline::Number) = Path([density],[baseline])
 
 Base.iterate(p::Path, state=1) = state > length(p.density) ? nothing : ( (p.density[state], p.baseline[state]),  state+1)
 
@@ -76,42 +76,23 @@ end
 $(SIGNATURES)
 
 # Arguments
-- `osc_vacuum::OscillationParameters`: Vacuum oscillation parameters
-- `energy`: Neutrino energy [GeV]
-- `paths`: Neutrino paths
-- `zoa`: Proton nucleon ratio (Z/A)
-- `anti`: Is anti neutrino
-"""
-function oscprob(osc_vacuum::OscillationParameters, energy, paths::Vector{Path{Float64}}; zoa=0.5, anti=false)
-    # TODO: attach U_vac and H_vac to the oscillation parameters, so that it's
-    # only calculated once and invalidated when any of the oscillation parameters
-    # are changed
-    U_vac = PMNSMatrix(osc_vacuum)
-    H_vac = Hamiltonian(osc_vacuum)
-    oscprob(U_vac, H_vac, energy, densities, baselines; zoa=zoa, anti=anti)
-end
-
-
-"""
-$(SIGNATURES)
-
-# Arguments
 - `U`: Vacuum PMNS Matrix
 - `H`: Vacuum Hamiltonian
-- `energies`: Neutrino energies [GeV]
-- `paths`: Neutrino paths
+- `energy`: Neutrino energy [GeV]
+- `path::Vector{Path}`: Neutrino path
 - `zoa`: Proton nucleon ratio (Z/A)
 - `anti`: Is anti neutrino
 """
-function oscprob(U, H, energies, paths::Vector{Path{Float64}}; zoa=0.5, anti=false)
+function oscprob(U, H, energy, path::Vector{Path}; zoa=0.5, anti=false)
+    energy = convert.(Float64, energy)
     H_eff = U * Diagonal{ComplexF64}(H) * adjoint(U)
-    A = zeros(ComplexF64, length(energies), length(paths), size(U)...)
-    cache_size = length(energies) * sum(map(x->length(x.density), paths)) 
+    A = zeros(ComplexF64, length(energy), length(path), size(U)...)
+    cache_size = length(energy) * sum(map(x->length(x.density), path)) 
     lru = LRU{Tuple{Float64, Float64},
               Tuple{Array{ComplexF64,2}, Vector{ComplexF64}}}(maxsize=cache_size)
-    for k in 1:length(energies)
-        @inbounds E = energies[k]
-        for (l, p) in enumerate(paths)
+    for k in 1:length(energy)
+        @inbounds E = energy[k]
+        for (l, p) in enumerate(path)
             tmp = Matrix{ComplexF64}(1I, size(U))
             for (m,b) in enumerate(p.baseline)
                 @inbounds ρ = p.density[m]
@@ -125,4 +106,25 @@ function oscprob(U, H, energies, paths::Vector{Path{Float64}}; zoa=0.5, anti=fal
     end
     P = map(x -> abs.(x) .^ 2, A)
     P
+end
+
+const oscprob(U, H, energy, path::Path; zoa=0.5, anti=false) = oscprob(U, H, energy, [path]; zoa=zoa, anti=anti)
+
+"""
+$(SIGNATURES)
+
+# Arguments
+- `osc_vacuum::OscillationParameters`: Vacuum oscillation parameters
+- `energy`: Neutrino energy [GeV]
+- `path`: Neutrino path
+- `zoa`: Proton nucleon ratio (Z/A)
+- `anti`: Is anti neutrino
+"""
+function oscprob(osc_vacuum::OscillationParameters, energy, path::Union{Path, Vector{Path}}; zoa=0.5, anti=false)
+    # TODO: attach U_vac and H_vac to the oscillation parameters, so that it's
+    # only calculated once and invalidated when any of the oscillation parameters
+    # are changed
+    U_vac = PMNSMatrix(osc_vacuum)
+    H_vac = Hamiltonian(osc_vacuum)
+    oscprob(U_vac, H_vac, energy, path; zoa=zoa, anti=anti)
 end
