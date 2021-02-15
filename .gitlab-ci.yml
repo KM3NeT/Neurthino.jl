@@ -4,7 +4,7 @@ variables:
 .test_template: &test_definition
   script:
     - mkdir -p "$CI_PROJECT_DIR/.julia" && ls -al "$CI_PROJECT_DIR/.julia"
-    - julia -e 'using Pkg; Pkg.clone(pwd()); Pkg.build("Neurthino"); Pkg.test("Neurthino"; coverage = true)'
+    - julia -e 'using Pkg; Pkg.add(PackageSpec(path=pwd())); Pkg.build("Neurthino"); Pkg.test("Neurthino"; coverage = true)'
     - julia -e 'using Pkg; Pkg.add("Coverage"); 
       import Neurthino; cd(joinpath(dirname(pathof(Neurthino)), ".."));
       using Coverage; cl, tl = get_summary(process_folder());
@@ -30,6 +30,14 @@ test:julia-1.2:
 
 test:julia-1.3:
   image: julia:1.3
+  <<: *test_definition
+
+test:julia-1.4:
+  image: julia:1.4
+  <<: *test_definition
+
+test:julia-1.5:
+  image: julia:1.5
   <<: *test_definition
 
 pages:

@@ -11,3 +11,7 @@ end
 @testset "Path" begin
 include("path_tests.jl")
 end
+
+@testset "Matter" begin
+include("matter_tests.jl")
+end
