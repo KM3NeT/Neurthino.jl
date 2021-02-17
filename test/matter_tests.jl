@@ -9,7 +9,7 @@ setΔm²!(osc, 2=>3, -2.523e-3);
 setΔm²!(osc, 1=>2, -7.39e-5);
 
 U_mat, H_mat = MatterOscillationMatrices(osc, 1, 13);
-test_values = Pνν(U_mat, H_mat, 1, 10000)
+test_values = Pνν(U_mat, H_mat, 1, 10000)[Energy=1, Baseline=1]
 @test test_values[1,1] ≈ 0.834 atol=0.01                                        
 @test test_values[1,2] ≈ 0.083 atol=0.01                                        
 @test test_values[1,3] ≈ 0.083 atol=0.01                                        
