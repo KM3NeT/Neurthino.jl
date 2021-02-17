@@ -280,20 +280,17 @@ Calculate the transistion probabilities between the neutrino flavours
 - `baseline`:   Baselines [km]
 
 """
-function oscprob(U, H, energy, baseline)
-    if !isa(energy, Array)
-        energy = [energy]
-    end
-    if !isa(baseline, Array)
-        baseline = [baseline]
-    end
+function oscprob(U, H, energy::Vector{T}, baseline::Vector{S}) where {T,S <: Real}
     s = (size(U)..., length(energy), length(baseline))
     combinations = collect(Iterators.product(energy, baseline))
     tmp = map(x->abs.(_oscprobampl(U, H, first(x), last(x))).^2, combinations)
     P = reshape(hcat(collect(Iterators.flatten(tmp))), s...)
-    AxisArray(P; InitFlav=NeutrinoFlavour.(1:3), FinalFlav=NeutrinoFlavour.(1:3), Energy=energy, Baseline=baseline)
+    P = permutedims(P, (3,4,1,2))
+    AxisArray(P; Energy=energy, Baseline=baseline, InitFlav=NeutrinoFlavour.(1:3), FinalFlav=NeutrinoFlavour.(1:3))
 end
 
+const oscprob(U, H, energy::T, baseline::Vector{S}) where {S,T <: Real} = oscprob(U, H, [energy], baseline)
+const oscprob(U, H, energy, baseline::T) where {T <: Real} = oscprob(U, H, energy, [baseline])
 
 """
 $(SIGNATURES)
