@@ -83,7 +83,7 @@ $(SIGNATURES)
 - `zoa`: Proton nucleon ratio (Z/A)
 - `anti`: Is anti neutrino
 """
-function oscprob(U, H, energy, path::Vector{Path}; zoa=0.5, anti=false)
+function oscprob(U, H, energy::Vector{T}, path::Vector{Path}; zoa=0.5, anti=false) where {T <: Real}
     energy = convert.(Float64, energy)
     H_eff = U * Diagonal{ComplexF64}(H) * adjoint(U)
     A = zeros(ComplexF64, length(energy), length(path), size(U)...)
@@ -107,6 +107,8 @@ function oscprob(U, H, energy, path::Vector{Path}; zoa=0.5, anti=false)
     P = map(x -> abs.(x) .^ 2, A)
     AxisArray(P; Energy=energy, Path=path, InitFlav=NeutrinoFlavour.(1:3), FinalFlav=NeutrinoFlavour.(1:3))
 end
+
+const oscprob(U, H, energy::T, path::Vector{Path}; zoa=0.5, anti=false) where {T <: Real} = oscprob(U, H, [energy], path; zoa=zoa, anti=anti)
 
 const oscprob(U, H, energy, path::Path; zoa=0.5, anti=false) = oscprob(U, H, energy, [path]; zoa=zoa, anti=anti)
 
