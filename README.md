@@ -42,11 +42,45 @@ julia> setΔm²!(osc, 1=>2, -7.39e-5);
 These oscillation parameters can now be used in order to calculate the oscillation
 probabilities between the flavour states. 
 ```
-julia> Pνν(osc, 1, 10000)
-3×3 Array{Float64,2}:
- 0.402703  0.24862   0.348676
- 0.100207  0.491245  0.408548
- 0.49709   0.260134  0.242776
+julia> p = Pνν(osc, 1, 10000)
+4-dimensional AxisArray{Float64,4,...} with axes:
+    :Energy, [1.0]
+    :Baseline, [10000.0]
+    :InitFlav, NeutrinoFlavour[Electron, Muon, Tau]
+    :FinalFlav, NeutrinoFlavour[Electron, Muon, Tau]
+And data, a 1×1×3×3 Array{Float64,4}:
+[:, :, 1, 1] =
+ 0.4027032498649196
+
+[:, :, 2, 1] =
+ 0.10020685077639596
+
+[:, :, 3, 1] =
+ 0.4970898993586843
+
+[:, :, 1, 2] =
+ 0.24862049503031283
+
+[:, :, 2, 2] =
+ 0.49124539964767405
+
+[:, :, 3, 2] =
+ 0.2601341053220131
+
+[:, :, 1, 3] =
+ 0.34867625510476735
+
+[:, :, 2, 3] =
+ 0.4085477495759299
+
+[:, :, 3, 3] =
+ 0.24277599531930263
+```
+The output is given via an `AxisArray` in order to provide an intuitive indexing, e.g.
+for P(νμ→ντ) at the given energy and baseline:
+```
+julia> p[Energy=1, Baseline=1, InitFlav=Muon, FinalFlav=Tau]
+0.4085477495759299
 ```
 The probabilities are calculated based on the transition matrix 
 (the so-called PMNS-Matrix) between flavour and mass eigenstates,
@@ -66,13 +100,44 @@ julia> H = Hamiltonian(osc)
   0.0017066333333333333 + 0.0im
 
 julia> Pνν(U, H, 1, 10000)
-3×3 Array{Float64,2}:
- 0.402703  0.24862   0.348676
- 0.100207  0.491245  0.408548
- 0.49709   0.260134  0.242776
+4-dimensional AxisArray{Float64,4,...} with axes:
+    :Energy, [1.0]
+    :Baseline, [10000.0]
+    :InitFlav, NeutrinoFlavour[Electron, Muon, Tau]
+    :FinalFlav, NeutrinoFlavour[Electron, Muon, Tau]
+And data, a 1×1×3×3 Array{Float64,4}:
+[:, :, 1, 1] =
+ 0.4027032498649196
+
+[:, :, 2, 1] =
+ 0.10020685077639596
+
+[:, :, 3, 1] =
+ 0.4970898993586843
+
+[:, :, 1, 2] =
+ 0.24862049503031283
+
+[:, :, 2, 2] =
+ 0.49124539964767405
+
+[:, :, 3, 2] =
+ 0.2601341053220131
+
+[:, :, 1, 3] =
+ 0.34867625510476735
+
+[:, :, 2, 3] =
+ 0.4085477495759299
+
+[:, :, 3, 3] =
+ 0.24277599531930263
 ```
-For the neutrino propagation through matter a modified PMNS-Matrix and Hamiltonian
-have to be determined, which requires the neutrino energy and the matter density. 
+The neutrino propagation through matter can be calculated in two different ways.
+For one fixed matter density a modified PMNS-Matrix and Hamiltonian can be determined
+and be used in the way it was outlined for vacuum oscillations.
+In order to determine the modified PMNS-Matrix and Hamiltonian the neutrino energy 
+and the matter density are required. 
 ```
 julia> U_mat, H_mat = MatterOscillationMatrices(U, H, 1, 13);
 
@@ -92,11 +157,43 @@ The oscillation probabilities can then be calculated using the `Pνν` function
 again.
 ```
 julia> Pνν(U_mat, H_mat, 1, 10000)
-3×3 Array{Float64,2}:
- 0.834273   0.082774   0.0829533
- 0.108105   0.0522763  0.839619
- 0.0576223  0.86495    0.077428
+4-dimensional AxisArray{Float64,4,...} with axes:
+    :Energy, [1]
+    :Baseline, [10000]
+    :InitFlav, NeutrinoFlavour[Electron, Muon, Tau]
+    :FinalFlav, NeutrinoFlavour[Electron, Muon, Tau]
+And data, a 1×1×3×3 Array{Float64,4}:
+[:, :, 1, 1] =
+ 0.8342726992356658
+
+[:, :, 2, 1] =
+ 0.10810503748752147
+
+[:, :, 3, 1] =
+ 0.057622263276811116
+
+[:, :, 1, 2] =
+ 0.08277404351083649
+
+[:, :, 2, 2] =
+ 0.052276251315704
+
+[:, :, 3, 2] =
+ 0.8649497051734536
+
+[:, :, 1, 3] =
+ 0.08295325725349613
+
+[:, :, 2, 3] =
+ 0.839618711196769
+
+[:, :, 3, 3] =
+ 0.07742803154973019
+
 ```
+The second option focuses on scenarios with more complex paths with respect to 
+sections with different densities. The usage is shown via neutrino oscillations through 
+the earth.
 
 ### Neutrino propagation through the Earth
 
@@ -118,10 +215,10 @@ julia> energies = 10 .^ range(0, stop=2, length=200);
 
 julia> prob = Pνν(U, H, energies, paths);
 ```
-The returned array `prob` is 4 dimensional, where the first & second dimension holds energy & path, which is in this example connected to the zenith angles. The third & fourth dimension of `prob` yield the initial & final flavour of the oscillation.
-P(νe&#8594;νe) is determined by `prob[:,:,1,1]`, which can be visualised by a `heatmap`:<br />
+The returned array `prob` is again of type `AxisArray` with an axis `Path` for the path index (instead of the `Baseline` axis).
+P(νe&#8594;νe) is determined by `prob[InitFlav=Electron, FinalFlav=Electron]`, which can be visualised by a `heatmap`:<br />
 ![](https://github.com/KM3NeT/Neurthino.jl/raw/master/docs/src/assets/earth_prob_elel.png) <br />
-and for P(νμ&#8594;νμ):<br />
+and for P(νμ&#8594;νμ) or `prob[InitFlav=Muon, FinalFlav=Muon]`:<br />
 ![](https://github.com/KM3NeT/Neurthino.jl/raw/master/docs/src/assets/earth_prob_mumu.png)
 <!-- ```@index -->
 <!-- ``` -->
