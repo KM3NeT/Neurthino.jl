@@ -274,16 +274,26 @@ $(SIGNATURES)
 Calculate the transistion probabilities between the neutrino flavours
 
 # Arguments
-- `U`:          Unitary transition matrix
-- `H`:          Energy eigenvalues
-- `energy`:     Energy [GeV]
-- `baseline`:   Baseline [km]
+- `U`:          PMNS Matrix
+- `H`:          Hamiltonian
+- `energy`:     Energies [GeV]
+- `baseline`:   Baselines [km]
 
 """
-function oscprob(U, H, energy, baseline)  
-    A = _oscprobampl(U, H, energy, baseline)
-    P = abs.(A) .^ 2
+function oscprob(U, H, energy, baseline)
+    if !isa(energy, Array)
+        energy = [energy]
+    end
+    if !isa(baseline, Array)
+        baseline = [baseline]
+    end
+    s = (size(U)..., length(energy), length(baseline))
+    combinations = collect(Iterators.product(energy, baseline))
+    tmp = map(x->abs.(_oscprobampl(U, H, first(x), last(x))).^2, combinations)
+    P = reshape(hcat(collect(Iterators.flatten(tmp))), s...)
+    AxisArray(P; InitFlav=NeutrinoFlavour.(1:3), FinalFlav=NeutrinoFlavour.(1:3), Energy=energy, Baseline=baseline)
 end
+
 
 """
 $(SIGNATURES)
@@ -299,7 +309,7 @@ Calculate the transistion probabilities between the neutrino flavours
 function oscprob(osc_params::OscillationParameters, energy, baseline)  
     H = Hamiltonian(osc_params)
     U = PMNSMatrix(osc_params)
-    oscprob(U, H, energy, baseline)
+    Pνν(U, H, energy, baseline)
 end
 
 """

@@ -105,7 +105,7 @@ function oscprob(U, H, energy, path::Vector{Path}; zoa=0.5, anti=false)
         end
     end
     P = map(x -> abs.(x) .^ 2, A)
-    P
+    AxisArray(P; Energy=energy, Path=path, InitFlav=NeutrinoFlavour.(1:3), FinalFlav=NeutrinoFlavour.(1:3))
 end
 
 const oscprob(U, H, energy, path::Path; zoa=0.5, anti=false) = oscprob(U, H, energy, [path]; zoa=zoa, anti=anti)
