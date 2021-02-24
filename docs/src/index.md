@@ -9,8 +9,6 @@
 
 # Neurthino.jl
 
-**The package is currently under development**
-
 **Neurthino.jl** is a package for calculating neutrino oscillation probabilities.
 The main focus of the package lies on atmospheric neutrino flux and the neutrino
 propagation through earth.
@@ -148,7 +146,7 @@ And data, a 1×1×3×3 Array{Float64,4}:
  0.24277599531930263
 ```
 
-## Oscillation in Vacuum
+## Oscillations in Vacuum
 
 For **homogeneous matter with a fixed density**, a modified PMNS-Matrix
 and Hamiltonian can be determined and passed into `Pνν`, just like for
