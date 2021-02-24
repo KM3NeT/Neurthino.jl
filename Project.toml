@@ -6,7 +6,6 @@ version = "1.0.0"
 [deps]
 AxisArrays = "39de3d68-74b9-583c-8d2d-e117c070f3a9"
 DocStringExtensions = "ffbed154-4ef7-542d-bbb7-c09d3a79fcae"
-HDF5 = "f67ccb44-e63f-5c2f-98bd-6dc0ccc4ba2f"
 LRUCache = "8ac3fa9e-de4c-5943-b1dc-09c6b5f20637"
 LightGraphs = "093fc24a-ae57-5d10-9952-331d41423f4d"
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
