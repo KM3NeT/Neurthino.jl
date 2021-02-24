@@ -1,13 +1,20 @@
 using Documenter, Neurthino
 
 makedocs(;
-    modules=[Neurthino],
-    format=Documenter.HTML(),
+    modules = [Neurthino],
+    authors = "Johannes Schumann, Tamas Gal",
+    format = Documenter.HTML(
+        prettyurls = get(ENV, "CI", nothing) == "true",
+        assets = ["assets/logo.ico"],
+    ),
     pages=[
-        "Home" => "index.md",
+        "Introduction" => "index.md",
+        "API" => "api.md",
     ],
-    repo="https://git.km3net.de/jschumann/Neurthino.jl/blob/{commit}{path}#L{line}",
+    repo="https://github.com/KM3NeT/Neurthino.jl/blob/{commit}{path}#L{line}",
     sitename="Neurthino.jl",
-    authors="Johannes Schumann, Tamas Gal",
-    assets=String[],
+)
+
+deploydocs(;
+    repo="github.com/KM3NeT/Corpuscles.jl",
 )
