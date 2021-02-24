@@ -15,7 +15,7 @@
 The main focus of the package lies on atmospheric neutrino flux and the neutrino
 propagation through earth.
 
-### Basic Usage
+## Basic Usage
 First of all the basic vacuum properties have to be defined by creating a
 `OscillationParameters` struct with fixed number of neutrino flavours of the 
 considered model:
@@ -148,7 +148,7 @@ And data, a 1×1×3×3 Array{Float64,4}:
  0.24277599531930263
 ```
 
-The neutrino propagation through matter can be calculated in two different ways.
+## Oscillation in Vacuum
 
 For **homogeneous matter with a fixed density**, a modified PMNS-Matrix
 and Hamiltonian can be determined and passed into `Pνν`, just like for
@@ -214,7 +214,7 @@ The second option is suitable for scenarios with more **complex paths** with
 sections of different densities. An example is shown in the next chapter, where
 we propagate neutrinos through the earth.
 
-### Neutrino propagation through the Earth
+## Neutrino Propagation through the Earth
 
 The `Neurthino.jl` package also includes features for the neutrino oscillation probabilities
 through the Earth, i.e. it contains functions for generating a neutrino path based on the
