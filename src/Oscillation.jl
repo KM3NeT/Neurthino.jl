@@ -6,16 +6,15 @@ end
 
 
 struct OscillationParameters{T}
-    mixing_angles::Array{T,2}
+    mixing_angles::SparseMatrixCSC{T,<:Integer}
     mass_squared_diff::SparseMatrixCSC{T,<:Integer}
-    cp_phases::Array{T,2}
+    cp_phases::SparseMatrixCSC{T,<:Integer}
     dim::Int64
-
     OscillationParameters(dim::Int64) = begin
         new{ComplexF64}(
-                zeros(dim, dim),
                 spzeros(dim, dim),
-                zeros(dim, dim),
+                spzeros(dim, dim),
+                spzeros(dim, dim),
                 dim)
     end
 end
@@ -83,6 +82,10 @@ function _mass_matrix_overdetermined(osc::OscillationParameters)
     set_elements = collect(zip(I, J))
     indices = Set([first.(set_elements)..., last.(set_elements)...])
     length(set_elements) >= length(indices) 
+end
+
+function Base.isvalid(osc::OscillationParameters)
+    return _mass_matrix_fully_determined(osc)
 end
 
 function _completed_mass_matrix(osc::OscillationParameters)

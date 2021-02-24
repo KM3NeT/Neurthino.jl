@@ -11,6 +11,8 @@ using LightGraphs
 using IterTools
 using AxisArrays
 
+import Base
+
 export oscprob, Pνν, Pνν, OscillationParameters, PMNSMatrix, Hamiltonian, MatterOscillationMatrices
 export masssquareddiff!, setΔm²!, cpphase!, setδ!, mixingangle!, setθ!
 

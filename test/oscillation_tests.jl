@@ -16,6 +16,8 @@ Neurthino.masssquareddiff!(osc, 1=>2,-7.39e-5)
 U = Neurthino.PMNSMatrix(osc)
 H = Neurthino.Hamiltonian(osc)
 
+@test isvalid(osc)
+
 test_values = Neurthino.oscprob(U, H, 1, 1.6e4)[Energy=1, Baseline=1]
 @test test_values[1,1] ≈ 0.142 atol=0.01 
 @test test_values[1,2] ≈ 0.420 atol=0.01 
