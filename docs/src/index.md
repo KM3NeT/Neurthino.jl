@@ -1,8 +1,8 @@
 ![](https://github.com/KM3NeT/Neurthino.jl/raw/master/docs/src/assets/neurthino.png)
 
-[![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://JuliaPhysics.github.io/Neurthino.jl/stable)
-[![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://JuliaPhysics.github.io/Neurthino.jl/dev)
-[![Build Status](https://github.com/JuliaPhysics/Neurthino.jl/workflows/CI/badge.svg)](https://github.com/JuliaPhysics/Neurthino.jl/actions)
+[![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://KM3NeT.github.io/Neurthino.jl/stable)
+[![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://KM3NeT.github.io/Neurthino.jl/dev)
+[![Build Status](https://github.com/KM3NeT/Neurthino.jl/workflows/CI/badge.svg)](https://github.com/KM3NeT/Neurthino.jl/actions)
 [![Codecov](https://codecov.io/gh/KM3NeT/Neurthino.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/KM3NeT/Neurthino.jl)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3933364.svg)](https://doi.org/10.5281/zenodo.3933364)
 
