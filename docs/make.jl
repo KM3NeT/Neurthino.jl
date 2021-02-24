@@ -16,5 +16,5 @@ makedocs(;
 )
 
 deploydocs(;
-    repo="github.com/KM3NeT/Corpuscles.jl",
+    repo="github.com/KM3NeT/Neurthino.jl",
 )
