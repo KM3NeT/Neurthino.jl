@@ -15,6 +15,7 @@ import Base
 
 export oscprob, Pνν, Pνν, OscillationParameters, PMNSMatrix, Hamiltonian, MatterOscillationMatrices
 export masssquareddiff!, setΔm²!, cpphase!, setδ!, mixingangle!, setθ!
+export cpphases, mixingangles
 
 export NeutrinoFlavour, Electron, Muon, Tau
 
