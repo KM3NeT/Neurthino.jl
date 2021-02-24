@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Introduction · Neurthino.jl</title><link href="https://fonts.googleapis.com/css?family=Lato|Roboto+Mono" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.11.1/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="assets/documenter.js"></script><script src="siteinfo.js"></script><script src="../versions.js"></script><link href="assets/logo.ico" rel="icon" type="image/x-icon"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/documenter-dark.css" data-theme-name="documenter-dark"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="assets/themeswap.js"></script></head><body><div id="documenter"><nav class="docs-sidebar"><div class="docs-package-name"><span class="docs-autofit">Neurthino.jl</span></div><form class="docs-search" action="search/"><input class="docs-search-query" id="documenter-search-query" name="q" type="text" placeholder="Search docs"/></form><ul class="docs-menu"><li class="is-active"><a class="tocitem" href>Introduction</a></li><li><a class="tocitem" href="api/">API</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><nav class="breadcrumb"><ul class="is-hidden-mobile"><li class="is-active"><a href>Introduction</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Introduction</a></li></ul></nav><div class="docs-right"><a class="docs-edit-link" href="https://github.com/KM3NeT/Neurthino.jl/blob/master/docs/src/index.md#L" title="Edit on GitHub"><span class="docs-icon fab"></span><span class="docs-label is-hidden-touch">Edit on GitHub</span></a><a class="docs-settings-button fas fa-cog" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-sidebar-button fa fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a></div></header><article class="content" id="documenter-page"><p><img src="https://github.com/KM3NeT/Neurthino.jl/raw/master/docs/src/assets/neurthino.png" alt/></p><p><a href="https://KM3NeT.github.io/Neurthino.jl/stable"><img src="https://img.shields.io/badge/docs-stable-blue.svg" alt="Stable"/></a> <a href="https://KM3NeT.github.io/Neurthino.jl/dev"><img src="https://img.shields.io/badge/docs-dev-blue.svg" alt="Dev"/></a> <a href="https://github.com/KM3NeT/Neurthino.jl/actions"><img src="https://github.com/KM3NeT/Neurthino.jl/workflows/CI/badge.svg" alt="Build Status"/></a> <a href="https://codecov.io/gh/KM3NeT/Neurthino.jl"><img src="https://codecov.io/gh/KM3NeT/Neurthino.jl/branch/master/graph/badge.svg" alt="Codecov"/></a> <a href="https://doi.org/10.5281/zenodo.3933364"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.3933364.svg" alt="DOI"/></a></p><h1 id="Neurthino.jl-1"><a class="docs-heading-anchor" href="#Neurthino.jl-1">Neurthino.jl</a><a class="docs-heading-anchor-permalink" href="#Neurthino.jl-1" title="Permalink"></a></h1><p><strong>The package is currently under development</strong></p><p><strong>Neurthino.jl</strong> is a package for calculating neutrino oscillation probabilities. The main focus of the package lies on atmospheric neutrino flux and the neutrino propagation through earth.</p><h3 id="Basic-Usage-1"><a class="docs-heading-anchor" href="#Basic-Usage-1">Basic Usage</a><a class="docs-heading-anchor-permalink" href="#Basic-Usage-1" title="Permalink"></a></h3><p>First of all the basic vacuum properties have to be defined via creating a <code>OscillationParameters</code> struct with fixed number of neutrino flavours of the  considered model.</p><pre><code class="language-julia">julia&gt; using Neurthino
+
+julia&gt; osc = OscillationParameters(3);</code></pre><p>The values of the mixing angles (<code>setθ!</code>), mass squared differences (<code>setΔm²</code>) and CP phases (<code>setδ!</code>) are initialised to 0 and have to be set individually.</p><pre><code class="language-none">julia&gt; setθ!(osc, 1=&gt;2, 0.59);
+
+julia&gt; setθ!(osc, 1=&gt;3, 0.15);
+
+julia&gt; setθ!(osc, 2=&gt;3, 0.84);
+
+julia&gt; setδ!(osc, 1=&gt;3, 3.86);</code></pre><p>The mass squared differences are defined as &lt;img src=&quot;https://render.githubusercontent.com/render/math?math=\Delta<em>{ij}=m</em>i^2-m<em>j^2&quot;&gt; and within the package the convention &lt;img src=&quot;https://render.githubusercontent.com/render/math?math=\forall%20i%3Cj:m</em>i%3Cm_j&quot;&gt; is kept.</p><pre><code class="language-none">julia&gt; setΔm²!(osc, 2=&gt;3, -2.523e-3);
+
+julia&gt; setΔm²!(osc, 1=&gt;2, -7.39e-5);</code></pre><p>These oscillation parameters can now be used in order to calculate the oscillation probabilities between the flavour states. </p><pre><code class="language-none">julia&gt; p = Pνν(osc, 1, 10000)
+4-dimensional AxisArray{Float64,4,...} with axes:
+    :Energy, [1.0]
+    :Baseline, [10000.0]
+    :InitFlav, NeutrinoFlavour[Electron, Muon, Tau]
+    :FinalFlav, NeutrinoFlavour[Electron, Muon, Tau]
+And data, a 1×1×3×3 Array{Float64,4}:
+[:, :, 1, 1] =
+ 0.4027032498649196
+
+[:, :, 2, 1] =
+ 0.10020685077639596
+
+[:, :, 3, 1] =
+ 0.4970898993586843
+
+[:, :, 1, 2] =
+ 0.24862049503031283
+
+[:, :, 2, 2] =
+ 0.49124539964767405
+
+[:, :, 3, 2] =
+ 0.2601341053220131
+
+[:, :, 1, 3] =
+ 0.34867625510476735
+
+[:, :, 2, 3] =
+ 0.4085477495759299
+
+[:, :, 3, 3] =
+ 0.24277599531930263</code></pre><p>The output is given via an <code>AxisArray</code> in order to provide an intuitive indexing, e.g. for P(νμ→ντ) at the given energy and baseline:</p><pre><code class="language-none">julia&gt; p[Energy=1, Baseline=1, InitFlav=Muon, FinalFlav=Tau]
+0.4085477495759299</code></pre><p>The probabilities are calculated based on the transition matrix  (the so-called PMNS-Matrix) between flavour and mass eigenstates, as well as the Hamiltonian in the mass eigenbasis. In order to calculating these  just once, the <code>Pνν</code> function can also be called in the following way:</p><pre><code class="language-none">julia&gt; U = PMNSMatrix(osc)
+3×3 Array{Complex,2}:
+   0.82161+0.0im         0.550114+0.0im        -0.112505+0.0983582im
+ -0.301737+0.0608595im   0.601232+0.0407488im   0.736282+0.0im      
+  0.476688+0.0545516im  -0.576975+0.0365253im   0.659968+0.0im
+
+julia&gt; H = Hamiltonian(osc)
+3-element Array{Complex{Float64},1}:
+ -0.0008902666666666667 + 0.0im
+ -0.0008163666666666667 + 0.0im
+  0.0017066333333333333 + 0.0im
+
+julia&gt; Pνν(U, H, 1, 10000)
+4-dimensional AxisArray{Float64,4,...} with axes:
+    :Energy, [1.0]
+    :Baseline, [10000.0]
+    :InitFlav, NeutrinoFlavour[Electron, Muon, Tau]
+    :FinalFlav, NeutrinoFlavour[Electron, Muon, Tau]
+And data, a 1×1×3×3 Array{Float64,4}:
+[:, :, 1, 1] =
+ 0.4027032498649196
+
+[:, :, 2, 1] =
+ 0.10020685077639596
+
+[:, :, 3, 1] =
+ 0.4970898993586843
+
+[:, :, 1, 2] =
+ 0.24862049503031283
+
+[:, :, 2, 2] =
+ 0.49124539964767405
+
+[:, :, 3, 2] =
+ 0.2601341053220131
+
+[:, :, 1, 3] =
+ 0.34867625510476735
+
+[:, :, 2, 3] =
+ 0.4085477495759299
+
+[:, :, 3, 3] =
+ 0.24277599531930263</code></pre><p>The neutrino propagation through matter can be calculated in two different ways. For one fixed matter density a modified PMNS-Matrix and Hamiltonian can be determined and be used in the way it was outlined for vacuum oscillations. In order to determine the modified PMNS-Matrix and Hamiltonian the neutrino energy  and the matter density are required. </p><pre><code class="language-none">julia&gt; U_mat, H_mat = MatterOscillationMatrices(U, H, 1, 13);
+
+julia&gt; H_mat
+3-element Array{Complex{Float64},1}:
+ -0.0008318913110425209 + 1.402405683460369e-20im 
+  0.0009755131119987117 + 4.535370547007611e-21im 
+  0.0018408194174787428 - 2.1947559170628515e-20im
+
+julia&gt; U_mat
+3×3 Array{Complex{Float64},2}:
+  0.0358018-0.000158113im  0.970863+0.0im       -0.178275+0.156083im
+ -0.662778+0.00661213im    0.157174+0.116074im   0.722845+0.0im
+  0.74793+0.0im            0.0917808+0.104043im  0.649115-0.00104331im</code></pre><p>The oscillation probabilities can then be calculated using the <code>Pνν</code> function again.</p><pre><code class="language-none">julia&gt; Pνν(U_mat, H_mat, 1, 10000)
+4-dimensional AxisArray{Float64,4,...} with axes:
+    :Energy, [1]
+    :Baseline, [10000]
+    :InitFlav, NeutrinoFlavour[Electron, Muon, Tau]
+    :FinalFlav, NeutrinoFlavour[Electron, Muon, Tau]
+And data, a 1×1×3×3 Array{Float64,4}:
+[:, :, 1, 1] =
+ 0.8342726992356658
+
+[:, :, 2, 1] =
+ 0.10810503748752147
+
+[:, :, 3, 1] =
+ 0.057622263276811116
+
+[:, :, 1, 2] =
+ 0.08277404351083649
+
+[:, :, 2, 2] =
+ 0.052276251315704
+
+[:, :, 3, 2] =
+ 0.8649497051734536
+
+[:, :, 1, 3] =
+ 0.08295325725349613
+
+[:, :, 2, 3] =
+ 0.839618711196769
+
+[:, :, 3, 3] =
+ 0.07742803154973019
+</code></pre><p>The second option focuses on scenarios with more complex paths with respect to  sections with different densities. The usage is shown via neutrino oscillations through  the earth.</p><h3 id="Neutrino-propagation-through-the-Earth-1"><a class="docs-heading-anchor" href="#Neutrino-propagation-through-the-Earth-1">Neutrino propagation through the Earth</a><a class="docs-heading-anchor-permalink" href="#Neutrino-propagation-through-the-Earth-1" title="Permalink"></a></h3><p>The <code>Neurthino.jl</code> package also includes features for the neutrino oscillation probabilities through the Earth, i.e. it contains functions for generating a neutrino path based on the PREM model. In the following example a neutrino oscillogram with a resolution 200x200 bins is determined. Thus, the zenith angles for up going neutrinos (cos(θ)ϵ[-1,0]) and  subsequently the neutrino paths are generated first.</p><pre><code class="language-none">julia&gt; zenith = acos.(range(-1,stop=0,length=200));
+
+julia&gt; paths = Neurthino.prempath(zenith, 2.5, samples=100, discrete_densities=0:0.1:14);</code></pre><p>The detector is assumed to be 2.5km under the earth&#39;s surface, which is a realistic scenario for Water-Cherenkov-Detectors in sea or ice. Each path consists of 100 sections of equal length and the density is taken from the PREM model. If a vector with densities is passed via <code>discete_densities</code>, the density values in paths are rounded to the closest value  in the given vector. The oscillation probabilities can be calculated now.</p><pre><code class="language-none">julia&gt; energies = 10 .^ range(0, stop=2, length=200);
+
+julia&gt; prob = Pνν(U, H, energies, paths);</code></pre><p>The returned array <code>prob</code> is again of type <code>AxisArray</code> with an axis <code>Path</code> for the path index (instead of the <code>Baseline</code> axis). P(νe&amp;#8594;νe) is determined by <code>prob[InitFlav=Electron, FinalFlav=Electron]</code>, which can be visualised by a <code>heatmap</code>:&lt;br /&gt; <img src="https://github.com/KM3NeT/Neurthino.jl/raw/master/docs/src/assets/earth_prob_elel.png" alt/> &lt;br /&gt; and for P(νμ&amp;#8594;νμ) or <code>prob[InitFlav=Muon, FinalFlav=Muon]</code>:&lt;br /&gt; <img src="https://github.com/KM3NeT/Neurthino.jl/raw/master/docs/src/assets/earth_prob_mumu.png" alt/> &lt;!– <code>@index --&gt; &lt;!--</code> –&gt; &lt;!–  –&gt; &lt;!– <code>@autodocs --&gt; &lt;!-- Modules = [Neurthino] --&gt; &lt;!--</code> –&gt;</p></article><nav class="docs-footer"><a class="docs-footer-nextpage" href="api/">API »</a></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> on <span class="colophon-date" title="Wednesday 24 February 2021 18:31">Wednesday 24 February 2021</span>. Using Julia version 1.5.3.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
