@@ -1,0 +1,51 @@
+{
+    "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+    "@type": "SoftwareSourceCode",
+    "license": "https://spdx.org/licenses/MIT",
+    "codeRepository": "git+https://github.com/KM3NeT/Neurthino.jl.git",
+    "contIntegration": "https://github.com/KM3NeT/Neurthino.jl/actions",
+    "dateCreated": "2019-06-13",
+    "datePublished": "2021-02-24",
+    "dateModified": "2021-02-24",
+    "issueTracker": "https://github.com/KM3NeT/Neurthino.jl/issues",
+    "name": "Neurthino.jl",
+    "version": "1.0.0",
+    "description": "Neurthino.jl is a package for calculating neutrino oscillation probabilities. The main focus of the package lies on atmospheric neutrino flux and the neutrino propagation through earth.",
+    "applicationCategory": "Particle physics",
+    "keywords": [
+        "physics",
+        "particle physics",
+        "neutrino",
+        "oscillations"
+    ],
+    "programmingLanguage": [
+        "Julia"
+    ],
+    "relatedLink": [
+        "https://km3net.github.io/Neurthino.jl/stable"
+    ],
+    "author": [
+        {
+            "@type": "Person",
+            "@id": "https://orcid.org/0000-0003-3722-086X",
+            "givenName": "Johannes",
+            "familyName": "Schumann",
+            "email": "jschumann@km3net.de",
+            "affiliation": {
+                "@type": "Organization",
+                "name": "Friedrich-Alexander-University Erlangen-Nuremberg, Erlangen Centre for Astroparticle Physics"
+            }
+        },
+        {
+            "@type": "Person",
+            "@id": "https://orcid.org/0000-0001-7821-8673",
+            "givenName": "Tamas",
+            "familyName": "Gal",
+            "email": "tgal@km3net.de",
+            "affiliation": {
+                "@type": "Organization",
+                "name": "Friedrich-Alexander-University Erlangen-Nuremberg, Erlangen Centre for Astroparticle Physics"
+            }
+        }
+    ]
+}
