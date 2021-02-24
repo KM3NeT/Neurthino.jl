@@ -5,10 +5,8 @@ using SparseArrays
 using StaticArrays
 using Polynomials
 using DocStringExtensions
-using Interpolations
 using LRUCache
 using LightGraphs
-using IterTools
 using AxisArrays
 
 import Base
