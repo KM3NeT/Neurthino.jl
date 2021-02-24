@@ -1,6 +1,6 @@
 name = "Neurthino"
 uuid = "ea3506b1-7c4e-45d8-9afb-6e8d18a7dde4"
-authors = ["Johannes Schumann"]
+authors = ["Johannes Schumann", "Tamás Gál"]
 version = "0.1.0"
 
 [deps]
