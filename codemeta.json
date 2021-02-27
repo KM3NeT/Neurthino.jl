@@ -12,6 +12,7 @@
     "version": "1.0.0",
     "description": "Neurthino.jl is a package for calculating neutrino oscillation probabilities. The main focus of the package lies on atmospheric neutrino flux and the neutrino propagation through earth.",
     "applicationCategory": "Particle physics",
+    "referencePublication": "https://doi.org/10.5281/zenodo.4568392",
     "keywords": [
         "physics",
         "particle physics",
