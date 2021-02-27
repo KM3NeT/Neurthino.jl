@@ -4,8 +4,7 @@
 [![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://KM3NeT.github.io/Neurthino.jl/dev)
 [![Build Status](https://github.com/KM3NeT/Neurthino.jl/workflows/CI/badge.svg)](https://github.com/KM3NeT/Neurthino.jl/actions)
 [![Codecov](https://codecov.io/gh/KM3NeT/Neurthino.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/KM3NeT/Neurthino.jl)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3933364.svg)](https://doi.org/10.5281/zenodo.3933364)
-
+[![DOI](https://zenodo.org/badge/278061614.svg)](https://zenodo.org/badge/latestdoi/278061614)
 
 # Neurthino.jl
 
