@@ -271,6 +271,15 @@ function _oscprobampl(U, H, energy, baseline)
     U * exp(-1im * H_diag) * adjoint(U)
 end
 
+function _make_flavour_range(size::Integer)
+    if size <= 3
+        return NeutrinoFlavour.(1:size)
+    else
+        return [NeutrinoFlavour.(1:3)..., 4:size...]
+    end
+end
+
+
 """
 $(SIGNATURES)
 
@@ -289,7 +298,8 @@ function oscprob(U, H, energy::Vector{T}, baseline::Vector{S}) where {T,S <: Rea
     tmp = map(x->abs.(_oscprobampl(U, H, first(x), last(x))).^2, combinations)
     P = reshape(hcat(collect(Iterators.flatten(tmp))), s...)
     P = permutedims(P, (3,4,1,2))
-    AxisArray(P; Energy=energy, Baseline=baseline, InitFlav=NeutrinoFlavour.(1:3), FinalFlav=NeutrinoFlavour.(1:3))
+    flavrange = _make_flavour_range(first(size(U)))
+    AxisArray(P; Energy=energy, Baseline=baseline, InitFlav=flavrange, FinalFlav=flavrange)
 end
 
 const oscprob(U, H, energy::T, baseline::Vector{S}) where {S,T <: Real} = oscprob(U, H, [energy], baseline)
