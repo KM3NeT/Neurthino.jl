@@ -51,6 +51,20 @@ for i in 3:100
     end
 end
 
+osc = OscillationParameters(4)
+mixingangle!(osc, 1=>2, 0.59)
+mixingangle!(osc, 1=>3, 0.15)
+mixingangle!(osc, 2=>3, 0.84)
+mixingangle!(osc, 1=>4, 0.2)
+mixingangle!(osc, 2=>4, 0.3)
+mixingangle!(osc, 3=>4, 0.4)
+masssquareddiff!(osc, 2=>3, -2.523e-3)
+masssquareddiff!(osc, 1=>2,-7.39e-5)
+masssquareddiff!(osc, 3=>4, -1)
+
+test_values = Neurthino.oscprob(osc, 1, 10000)[Energy=1, Baseline=1]
+@test test_values[1,1] ≈ 0.3373 atol=0.01
+
 h5open("data/refdata.h5", "r") do file
     # Nu-Fit v5.0 Values
     osc_nh = OscillationParameters(3);
