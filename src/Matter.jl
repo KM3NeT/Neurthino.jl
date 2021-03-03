@@ -105,7 +105,8 @@ function oscprob(U, H, energy::Vector{T}, path::Vector{Path}; zoa=0.5, anti=fals
         end
     end
     P = map(x -> abs.(x) .^ 2, A)
-    AxisArray(P; Energy=energy, Path=path, InitFlav=NeutrinoFlavour.(1:3), FinalFlav=NeutrinoFlavour.(1:3))
+    flavrange = _make_flavour_range(first(size(U)))
+    AxisArray(P; Energy=energy, Path=path, InitFlav=flavrange, FinalFlav=flavrange)
 end
 
 const oscprob(U, H, energy::T, path::Vector{Path}; zoa=0.5, anti=false) where {T <: Real} = oscprob(U, H, [energy], path; zoa=zoa, anti=anti)
