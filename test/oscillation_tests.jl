@@ -51,6 +51,12 @@ for i in 3:100
     end
 end
 
+osc = OscillationParameters(2)
+mixingangle!(osc, 1=>2, 0.59)
+masssquareddiff!(osc, 1=>2,-7.39e-5)
+test_values = Neurthino.oscprob(osc, 1, 10000)[Energy=1, Baseline=1]
+@test test_values[1,1] ≈ 0.4454 atol=0.01
+
 osc = OscillationParameters(4)
 mixingangle!(osc, 1=>2, 0.59)
 mixingangle!(osc, 1=>3, 0.15)
