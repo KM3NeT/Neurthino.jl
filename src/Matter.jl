@@ -67,7 +67,7 @@ Create modified oscillation parameters for neutrino propagation through matter
 """
 function MatterOscillationMatrices(osc_vacuum::OscillationParameters, energy, density; zoa=0.5, anti=false)
     H_vacuum = Diagonal(Hamiltonian(osc_vacuum)) 
-    U_vacuum = PMNSMatrix(osc_vacuum)
+    U_vacuum = PMNSMatrix(osc_vacuum; anti=anti)
     H_eff = convert(Array{ComplexF64}, U_vacuum * Diagonal{ComplexF64}(H_vacuum) * adjoint(U_vacuum))
     return MatterOscillationMatrices(H_eff, energy, density; zoa=zoa, anti=anti)
 end
@@ -126,7 +126,7 @@ function oscprob(osc_vacuum::OscillationParameters, energy, path::Union{Path, Ve
     # TODO: attach U_vac and H_vac to the oscillation parameters, so that it's
     # only calculated once and invalidated when any of the oscillation parameters
     # are changed
-    U_vac = PMNSMatrix(osc_vacuum)
+    U_vac = PMNSMatrix(osc_vacuum; anti=anti)
     H_vac = Hamiltonian(osc_vacuum)
     oscprob(U_vac, H_vac, energy, path; zoa=zoa, anti=anti)
 end
