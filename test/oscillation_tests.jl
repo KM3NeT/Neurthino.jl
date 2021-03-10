@@ -21,23 +21,31 @@ H = Neurthino.Hamiltonian(osc)
 test_values = Neurthino.oscprob(U, H, 1, 1.6e4)[Energy=1, Baseline=1]
 @test test_values[1,1] ≈ 0.142 atol=0.01
 @test test_values[1,2] ≈ 0.420 atol=0.01
-@test test_values[1,3] ≈ 0.438 atol=0.01
+@test test_values[1,3] ≈ 0.436 atol=0.01
 @test test_values[2,2] ≈ 0.257 atol=0.01
 @test test_values[2,3] ≈ 0.323 atol=0.01
-@test test_values[3,3] ≈ 0.239 atol=0.01
+@test test_values[3,3] ≈ 0.240 atol=0.01
 
-# Neurthino.masssquareddiff!(osc, 3=>2, 2.523e-3)
-# Neurthino.masssquareddiff!(osc, 2=>1, 7.39e-5)
+Neurthino.masssquareddiff!(osc, 3=>2, 2.523e-3)
+Neurthino.masssquareddiff!(osc, 2=>1, 7.39e-5)
 
 test_values = Neurthino.oscprob(osc, 1, 1.6e4)[Energy=1, Baseline=1]
 @test test_values[1,1] ≈ 0.142 atol=0.01 
 @test test_values[1,2] ≈ 0.420 atol=0.01 
-@test test_values[1,3] ≈ 0.438 atol=0.01 
+@test test_values[1,3] ≈ 0.436 atol=0.01 
 @test test_values[2,2] ≈ 0.257 atol=0.01 
 @test test_values[2,3] ≈ 0.323 atol=0.01 
-@test test_values[3,3] ≈ 0.239 atol=0.01 
+@test test_values[3,3] ≈ 0.240 atol=0.01 
 
-Neurthino.cpphase!(osc, 1=>3, 3.86)
+Neurthino.cpphase!(osc, 1=>3, 234 * π / 180)
+
+test_values = Neurthino.oscprob(osc, 1, 1.6e4; anti=true)[Energy=1, Baseline=1]
+@test test_values[1,1] ≈ 0.142 atol=0.01 
+@test test_values[1,2] ≈ 0.479 atol=0.01 
+@test test_values[1,3] ≈ 0.378 atol=0.01 
+@test test_values[2,2] ≈ 0.289 atol=0.01 
+@test test_values[2,3] ≈ 0.462 atol=0.01 
+@test test_values[3,3] ≈ 0.159 atol=0.01 
 
 @test_logs (:warn, "Mass squared difference fields (partially) overdetermined!") Neurthino.masssquareddiff!(osc, 3=>1, 1)
 
