@@ -7,30 +7,31 @@ setθ!(osc, 2=>3, 0.84);
 setδ!(osc, 1=>3, 3.86);
 setΔm²!(osc, 2=>3, -2.523e-3);
 setΔm²!(osc, 1=>2, -7.39e-5);
+setδ!(osc, 1=>3, 234 * π / 180);
 
 U_mat, H_mat = MatterOscillationMatrices(osc, 1, 13);
 test_values = Pνν(U_mat, H_mat, 1, 10000)[Energy=1, Baseline=1]
 @test test_values[1,1] ≈ 0.834 atol=0.01
-@test test_values[1,2] ≈ 0.108 atol=0.01
-@test test_values[1,3] ≈ 0.058 atol=0.01
-@test test_values[2,1] ≈ 0.083 atol=0.01
-@test test_values[2,2] ≈ 0.052 atol=0.01
-@test test_values[2,3] ≈ 0.864 atol=0.01
+@test test_values[1,2] ≈ 0.110 atol=0.01
+@test test_values[1,3] ≈ 0.055 atol=0.01
+@test test_values[2,1] ≈ 0.079 atol=0.01
+@test test_values[2,2] ≈ 0.054 atol=0.01
+@test test_values[2,3] ≈ 0.867 atol=0.01
 @test test_values[3,1] ≈ 0.083 atol=0.01
-@test test_values[3,2] ≈ 0.840 atol=0.01
+@test test_values[3,2] ≈ 0.836 atol=0.01
 @test test_values[3,3] ≈ 0.077 atol=0.01
 
 p = Neurthino.Path([13],[10000])
 E = [1,2]
 test_values = Pνν(osc, E, p)
 @test test_values[1,1,1,1] ≈ 0.834 atol=0.01
-@test test_values[1,1,1,2] ≈ 0.108 atol=0.01
-@test test_values[1,1,1,3] ≈ 0.058 atol=0.01
-@test test_values[1,1,2,1] ≈ 0.083 atol=0.01
-@test test_values[1,1,2,2] ≈ 0.052 atol=0.01
-@test test_values[1,1,2,3] ≈ 0.864 atol=0.01
+@test test_values[1,1,1,2] ≈ 0.110 atol=0.01
+@test test_values[1,1,1,3] ≈ 0.055 atol=0.01
+@test test_values[1,1,2,1] ≈ 0.079 atol=0.01
+@test test_values[1,1,2,2] ≈ 0.054 atol=0.01
+@test test_values[1,1,2,3] ≈ 0.867 atol=0.01
 @test test_values[1,1,3,1] ≈ 0.083 atol=0.01
-@test test_values[1,1,3,2] ≈ 0.840 atol=0.01
+@test test_values[1,1,3,2] ≈ 0.836 atol=0.01
 @test test_values[1,1,3,3] ≈ 0.077 atol=0.01
 
 
@@ -39,24 +40,35 @@ E = 1
 
 test_values = Pνν(osc, E, p)
 @test test_values[1,1,1,1] ≈ 0.834 atol=0.01
-@test test_values[1,1,1,2] ≈ 0.108 atol=0.01
-@test test_values[1,1,1,3] ≈ 0.058 atol=0.01
-@test test_values[1,1,2,1] ≈ 0.083 atol=0.01
-@test test_values[1,1,2,2] ≈ 0.052 atol=0.01
-@test test_values[1,1,2,3] ≈ 0.864 atol=0.01
+@test test_values[1,1,1,2] ≈ 0.110 atol=0.01
+@test test_values[1,1,1,3] ≈ 0.055 atol=0.01
+@test test_values[1,1,2,1] ≈ 0.079 atol=0.01
+@test test_values[1,1,2,2] ≈ 0.054 atol=0.01
+@test test_values[1,1,2,3] ≈ 0.867 atol=0.01
 @test test_values[1,1,3,1] ≈ 0.083 atol=0.01
-@test test_values[1,1,3,2] ≈ 0.840 atol=0.01
+@test test_values[1,1,3,2] ≈ 0.836 atol=0.01
 @test test_values[1,1,3,3] ≈ 0.077 atol=0.01
 
 @test test_values[Energy=1,Path=1,InitFlav=Electron,FinalFlav=Electron] ≈ 0.834 atol=0.01
-@test test_values[Energy=1,Path=1,InitFlav=Electron,FinalFlav=Muon]     ≈ 0.108 atol=0.01
-@test test_values[Energy=1,Path=1,InitFlav=Electron,FinalFlav=Tau]      ≈ 0.058 atol=0.01
-@test test_values[Energy=1,Path=1,InitFlav=Muon,FinalFlav=Electron]     ≈ 0.083 atol=0.01
-@test test_values[Energy=1,Path=1,InitFlav=Muon,FinalFlav=Muon]         ≈ 0.052 atol=0.01
-@test test_values[Energy=1,Path=1,InitFlav=Muon,FinalFlav=Tau]          ≈ 0.864 atol=0.01
+@test test_values[Energy=1,Path=1,InitFlav=Electron,FinalFlav=Muon]     ≈ 0.110 atol=0.01
+@test test_values[Energy=1,Path=1,InitFlav=Electron,FinalFlav=Tau]      ≈ 0.055 atol=0.01
+@test test_values[Energy=1,Path=1,InitFlav=Muon,FinalFlav=Electron]     ≈ 0.079 atol=0.01
+@test test_values[Energy=1,Path=1,InitFlav=Muon,FinalFlav=Muon]         ≈ 0.054 atol=0.01
+@test test_values[Energy=1,Path=1,InitFlav=Muon,FinalFlav=Tau]          ≈ 0.867 atol=0.01
 @test test_values[Energy=1,Path=1,InitFlav=Tau,FinalFlav=Electron]      ≈ 0.083 atol=0.01
-@test test_values[Energy=1,Path=1,InitFlav=Tau,FinalFlav=Muon]          ≈ 0.840 atol=0.01
+@test test_values[Energy=1,Path=1,InitFlav=Tau,FinalFlav=Muon]          ≈ 0.836 atol=0.01
 @test test_values[Energy=1,Path=1,InitFlav=Tau,FinalFlav=Tau]           ≈ 0.077 atol=0.01
+
+test_values = Pνν(osc, E, p, anti=true)
+@test test_values[1,1,1,1] ≈ 0.976 atol=0.01
+@test test_values[1,1,1,2] ≈ 0.013 atol=0.01
+@test test_values[1,1,1,3] ≈ 0.011 atol=0.01
+@test test_values[1,1,2,1] ≈ 0.012 atol=0.01
+@test test_values[1,1,2,2] ≈ 0.663 atol=0.01
+@test test_values[1,1,2,3] ≈ 0.325 atol=0.01
+@test test_values[1,1,3,1] ≈ 0.013 atol=0.01
+@test test_values[1,1,3,2] ≈ 0.324 atol=0.01
+@test test_values[1,1,3,3] ≈ 0.664 atol=0.01
 
 h5open("data/refdata.h5", "r") do file
     # Nu-Fit v5.0 Values
