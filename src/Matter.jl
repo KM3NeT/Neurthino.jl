@@ -42,7 +42,6 @@ Create modified oscillation parameters for neutrino propagation through matter
 """
 function MatterOscillationMatrices(H_eff, energy, density; zoa=0.5, anti=false)
     A = sqrt(2) * G_F * N_A * zoa * density
-    a = H_eff[1,1]
     if anti
         H_eff[1,1] -= A * (2 * energy * 1e9)
     else
