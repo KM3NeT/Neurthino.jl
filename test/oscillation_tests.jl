@@ -75,9 +75,7 @@ h5open("data/refdata.h5", "r") do file
     U_nh = PMNSMatrix(osc_nh)
     H_nh = Hamiltonian(osc_nh)
 
-    # data_vac_nh = permutedims(reshape(collect(Iterators.flatten(map(b->Neurthino.oscprob(U_nh, H_nh, vac_energy, b), vac_baselines))), (3,3,length(vac_baselines))), (3,1,2));
     data_vac_nh = Pνν(U_nh, H_nh, vac_energy, vac_baselines)[Energy=1];
     refdata = read(file, "vacuum/prob_nh")
     @test data_vac_nh ≈ refdata atol=0.01
-    # error(size(data_vac_nh)
 end
