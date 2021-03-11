@@ -271,7 +271,7 @@ end
 
 
 function _oscprobampl(U, H, energy, baseline)  
-    H_diag = 2.534 * Diagonal{ComplexF64}(H) * baseline / energy 
+    H_diag = 2.5338653580781976 * Diagonal{ComplexF64}(H) * baseline / energy 
     U * exp(1im * H_diag) * adjoint(U)
 end
 
