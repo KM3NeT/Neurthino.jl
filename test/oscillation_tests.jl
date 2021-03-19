@@ -76,9 +76,6 @@ masssquareddiff!(osc, 2=>3, -2.523e-3)
 masssquareddiff!(osc, 1=>2,-7.39e-5)
 masssquareddiff!(osc, 3=>4, -1)
 
-test_values = Neurthino.oscprob(osc, 1, 10000)[Energy=1, Baseline=1]
-@test test_values[1,1] ≈ 0.3373 atol=0.01
-
 h5open("data/refdata.h5", "r") do file
     # Nu-Fit v5.0 Values
     osc_nh = OscillationParameters(3);
