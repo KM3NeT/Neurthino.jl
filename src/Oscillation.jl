@@ -191,7 +191,7 @@ end
 
 const setδ! = cpphase!
 
-function PMNSMatrix(osc_params::OscillationParameters)
+function PMNSMatrix(osc_params::OscillationParameters; anti=false)
 """
 $(SIGNATURES)
 
@@ -199,6 +199,7 @@ Create rotation matrix (PMNS) based on the given oscillation parameters
 
 # Arguments
 - `osc_params::OscillationParameters`: Oscillation parameters
+- `anti`: Is anti neutrino
 
 """
     dim = size(osc_params.mixing_angles)[1]
@@ -215,6 +216,9 @@ Create rotation matrix (PMNS) based on the given oscillation parameters
         if CartesianIndex(i, j) in findall(!iszero, osc_params.cp_phases)
             cp_phase = osc_params.cp_phases[i, j]
             cp_term = exp(-1im * cp_phase)
+            if anti
+                cp_term = conj(cp_term)
+            end
             rot[i, j] *= cp_term
             rot[j, i] *= conj(cp_term)
         end
@@ -267,8 +271,8 @@ end
 
 
 function _oscprobampl(U, H, energy, baseline)  
-    H_diag = 2.534 * Diagonal{ComplexF64}(H) * baseline / energy 
-    U * exp(-1im * H_diag) * adjoint(U)
+    H_diag = 2.5338653580781976 * Diagonal{ComplexF64}(H) * baseline / energy 
+    U * exp(1im * H_diag) * adjoint(U)
 end
 
 function _make_flavour_range(size::Integer)
@@ -314,29 +318,13 @@ Calculate the transistion probabilities between the neutrino flavours
 - `osc_params::OscillationParameters`:  Oscillation parameters
 - `energy`:                             Energy [GeV]
 - `baseline`:                           Baseline [km]
+- `anti`:                               Is anti neutrino
 
 """
-function oscprob(osc_params::OscillationParameters, energy, baseline)  
+function oscprob(osc_params::OscillationParameters, energy, baseline; anti=false)  
     H = Hamiltonian(osc_params)
-    U = PMNSMatrix(osc_params)
+    U = PMNSMatrix(osc_params; anti=anti)
     Pνν(U, H, energy, baseline)
-end
-
-"""
-$(SIGNATURES)
-
-Calculate the transistion probabilities between the neutrino flavours
-
-# Arguments
-- `osc_params::OscillationParameters`:  Oscillation parameters
-- `flavours::Pair{Union{NeutrinoFlavour, Integer}, Union{NeutrinoFlavour, Integer}}`: Pair indicating the initial and final flavour
-- `energy`:                             Energy [GeV]
-- `baseline`:                           Baseline [km]
-"""
-function oscprob(osc_params::OscillationParameters, flavors::Pair{T, T}, energy, baseline) where {T <: Union{NeutrinoFlavour, Integer}}
-    fromflavor = Int(first(flavors))
-    toflavor = Int(last(flavors))
-    oscprob(osc, energy, baseline)[fromflavor, toflavor]
 end
 
 const Pνν = oscprob

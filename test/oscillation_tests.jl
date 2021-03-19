@@ -19,12 +19,12 @@ H = Neurthino.Hamiltonian(osc)
 @test isvalid(osc)
 
 test_values = Neurthino.oscprob(U, H, 1, 1.6e4)[Energy=1, Baseline=1]
-@test test_values[1,1] ≈ 0.142 atol=0.01 
-@test test_values[1,2] ≈ 0.420 atol=0.01 
-@test test_values[1,3] ≈ 0.438 atol=0.01 
-@test test_values[2,2] ≈ 0.256 atol=0.01 
-@test test_values[2,3] ≈ 0.323 atol=0.01 
-@test test_values[3,3] ≈ 0.239 atol=0.01 
+@test test_values[1,1] ≈ 0.142 atol=0.01
+@test test_values[1,2] ≈ 0.420 atol=0.01
+@test test_values[1,3] ≈ 0.436 atol=0.01
+@test test_values[2,2] ≈ 0.257 atol=0.01
+@test test_values[2,3] ≈ 0.323 atol=0.01
+@test test_values[3,3] ≈ 0.240 atol=0.01
 
 Neurthino.masssquareddiff!(osc, 3=>2, 2.523e-3)
 Neurthino.masssquareddiff!(osc, 2=>1, 7.39e-5)
@@ -32,12 +32,20 @@ Neurthino.masssquareddiff!(osc, 2=>1, 7.39e-5)
 test_values = Neurthino.oscprob(osc, 1, 1.6e4)[Energy=1, Baseline=1]
 @test test_values[1,1] ≈ 0.142 atol=0.01 
 @test test_values[1,2] ≈ 0.420 atol=0.01 
-@test test_values[1,3] ≈ 0.438 atol=0.01 
-@test test_values[2,2] ≈ 0.256 atol=0.01 
+@test test_values[1,3] ≈ 0.436 atol=0.01 
+@test test_values[2,2] ≈ 0.257 atol=0.01 
 @test test_values[2,3] ≈ 0.323 atol=0.01 
-@test test_values[3,3] ≈ 0.239 atol=0.01 
+@test test_values[3,3] ≈ 0.240 atol=0.01 
 
-Neurthino.cpphase!(osc, 1=>3, 3.86)
+Neurthino.cpphase!(osc, 1=>3, 234 * π / 180)
+
+test_values = Neurthino.oscprob(osc, 1, 1.6e4; anti=true)[Energy=1, Baseline=1]
+@test test_values[1,1] ≈ 0.142 atol=0.01 
+@test test_values[1,2] ≈ 0.479 atol=0.01 
+@test test_values[1,3] ≈ 0.378 atol=0.01 
+@test test_values[2,2] ≈ 0.289 atol=0.01 
+@test test_values[2,3] ≈ 0.462 atol=0.01 
+@test test_values[3,3] ≈ 0.159 atol=0.01 
 
 @test_logs (:warn, "Mass squared difference fields (partially) overdetermined!") Neurthino.masssquareddiff!(osc, 3=>1, 1)
 
@@ -68,8 +76,6 @@ masssquareddiff!(osc, 2=>3, -2.523e-3)
 masssquareddiff!(osc, 1=>2,-7.39e-5)
 masssquareddiff!(osc, 3=>4, -1)
 
-test_values = Neurthino.oscprob(osc, 1, 10000)[Energy=1, Baseline=1]
-@test test_values[1,1] ≈ 0.3373 atol=0.01
 
 h5open("data/refdata.h5", "r") do file
     # Nu-Fit v5.0 Values
@@ -87,9 +93,7 @@ h5open("data/refdata.h5", "r") do file
     U_nh = PMNSMatrix(osc_nh)
     H_nh = Hamiltonian(osc_nh)
 
-    # data_vac_nh = permutedims(reshape(collect(Iterators.flatten(map(b->Neurthino.oscprob(U_nh, H_nh, vac_energy, b), vac_baselines))), (3,3,length(vac_baselines))), (3,1,2));
     data_vac_nh = Pνν(U_nh, H_nh, vac_energy, vac_baselines)[Energy=1];
     refdata = read(file, "vacuum/prob_nh")
     @test data_vac_nh ≈ refdata atol=0.01
-    # error(size(data_vac_nh)
 end
