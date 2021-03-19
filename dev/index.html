@@ -17,35 +17,35 @@ julia&gt; setΔm²!(osc, 1=&gt;2, -7.39e-5);</code></pre><p>These oscillation pa
     :FinalFlav, NeutrinoFlavour[Electron, Muon, Tau]
 And data, a 1×1×3×3 Array{Float64,4}:
 [:, :, 1, 1] =
- 0.4027032498649196
+ 0.40280077905806266
 
 [:, :, 2, 1] =
- 0.10020685077639596
+ 0.24823028034134093
 
 [:, :, 3, 1] =
- 0.4970898993586843
+ 0.348968940600596
 
 [:, :, 1, 2] =
- 0.24862049503031283
+ 0.10025499082597984
 
 [:, :, 2, 2] =
- 0.49124539964767405
+ 0.49250415138072934
 
 [:, :, 3, 2] =
- 0.2601341053220131
+ 0.4072408577932906
 
 [:, :, 1, 3] =
- 0.34867625510476735
+ 0.49694423011595723
 
 [:, :, 2, 3] =
- 0.4085477495759299
+ 0.2592655682779296
 
 [:, :, 3, 3] =
- 0.24277599531930263</code></pre><p>The output is an <code>AxisArray</code> which provides intuitive indexing, e.g. for P(νμ→ντ) at the given energy and baseline:</p><pre><code class="language-none">julia&gt; p[Energy=1, Baseline=1, InitFlav=Muon, FinalFlav=Tau]
-0.4085477495759299</code></pre><p>The probabilities are calculated based on the transition matrix  (the so-called PMNS-Matrix) between flavour and mass eigenstates, as well as the Hamiltonian in the mass eigenbasis. In order to calculating these  just once, the <code>Pνν</code> function can be utilised in the following way:</p><pre><code class="language-none">julia&gt; U = PMNSMatrix(osc)
-3×3 Array{Complex,2}:
+ 0.24379020160611306</code></pre><p>The output is an <code>AxisArray</code> which provides intuitive indexing, e.g. for P(νμ→ντ) at the given energy and baseline:</p><pre><code class="language-none">julia&gt; p[Energy=1, Baseline=1, InitFlav=Muon, FinalFlav=Tau]
+0.2592655682779296</code></pre><p>The probabilities are calculated based on the transition matrix  (the so-called PMNS-Matrix) between flavour and mass eigenstates, as well as the Hamiltonian in the mass eigenbasis. In order to calculating these  just once, the <code>Pνν</code> function can be utilised in the following way:</p><pre><code class="language-none">julia&gt; U = PMNSMatrix(osc)
+3×3 Array{Complex{Float64},2}:
    0.82161+0.0im         0.550114+0.0im        -0.112505+0.0983582im
- -0.301737+0.0608595im   0.601232+0.0407488im   0.736282+0.0im      
+ -0.301737+0.0608595im   0.601232+0.0407488im   0.736282+0.0im
   0.476688+0.0545516im  -0.576975+0.0365253im   0.659968+0.0im
 
 julia&gt; H = Hamiltonian(osc)
@@ -62,37 +62,37 @@ julia&gt; Pνν(U, H, 1, 10000)
     :FinalFlav, NeutrinoFlavour[Electron, Muon, Tau]
 And data, a 1×1×3×3 Array{Float64,4}:
 [:, :, 1, 1] =
- 0.4027032498649196
+ 0.40280077905806266
 
 [:, :, 2, 1] =
- 0.10020685077639596
+ 0.24823028034134093
 
 [:, :, 3, 1] =
- 0.4970898993586843
+ 0.348968940600596
 
 [:, :, 1, 2] =
- 0.24862049503031283
+ 0.10025499082597984
 
 [:, :, 2, 2] =
- 0.49124539964767405
+ 0.49250415138072934
 
 [:, :, 3, 2] =
- 0.2601341053220131
+ 0.4072408577932906
 
 [:, :, 1, 3] =
- 0.34867625510476735
+ 0.49694423011595723
 
 [:, :, 2, 3] =
- 0.4085477495759299
+ 0.2592655682779296
 
 [:, :, 3, 3] =
- 0.24277599531930263</code></pre><h2 id="Oscillations-in-Vacuum-1"><a class="docs-heading-anchor" href="#Oscillations-in-Vacuum-1">Oscillations in Vacuum</a><a class="docs-heading-anchor-permalink" href="#Oscillations-in-Vacuum-1" title="Permalink"></a></h2><p>For <strong>homogeneous matter with a fixed density</strong>, a modified PMNS-Matrix and Hamiltonian can be determined and passed into <code>Pνν</code>, just like for oscillations in vacuum. In order to determine the modified PMNS-Matrix and Hamiltonian the neutrino energy and the matter density are required: </p><pre><code class="language-none">julia&gt; U_mat, H_mat = MatterOscillationMatrices(U, H, 1, 13);
+ 0.24379020160611306</code></pre><h2 id="Oscillations-in-Vacuum-1"><a class="docs-heading-anchor" href="#Oscillations-in-Vacuum-1">Oscillations in Vacuum</a><a class="docs-heading-anchor-permalink" href="#Oscillations-in-Vacuum-1" title="Permalink"></a></h2><p>For <strong>homogeneous matter with a fixed density</strong>, a modified PMNS-Matrix and Hamiltonian can be determined and passed into <code>Pνν</code>, just like for oscillations in vacuum. In order to determine the modified PMNS-Matrix and Hamiltonian the neutrino energy and the matter density are required: </p><pre><code class="language-none">julia&gt; U_mat, H_mat = MatterOscillationMatrices(U, H, 1, 13);
 
 julia&gt; H_mat
 3-element Array{Complex{Float64},1}:
- -0.0008318913110425209 + 1.402405683460369e-20im 
-  0.0009755131119987117 + 4.535370547007611e-21im 
-  0.0018408194174787428 - 2.1947559170628515e-20im
+ -0.0008404901318507502 - 2.5459232191294903e-20im
+   9.078126149399635e-5 - 1.75151351027943e-20im
+  0.0017419062876598283 - 1.8741859435908039e-19im
 
 julia&gt; U_mat
 3×3 Array{Complex{Float64},2}:
@@ -106,33 +106,33 @@ julia&gt; U_mat
     :FinalFlav, NeutrinoFlavour[Electron, Muon, Tau]
 And data, a 1×1×3×3 Array{Float64,4}:
 [:, :, 1, 1] =
- 0.8342726992356658
+ 0.8340722296308641
 
 [:, :, 2, 1] =
- 0.10810503748752147
+ 0.08290502782120308
 
 [:, :, 3, 1] =
- 0.057622263276811116
+ 0.08302274254793415
 
 [:, :, 1, 2] =
- 0.08277404351083649
+ 0.10825570726818898
 
 [:, :, 2, 2] =
- 0.052276251315704
+ 0.052976635020068
 
 [:, :, 3, 2] =
- 0.8649497051734536
+ 0.8387676577117485
 
 [:, :, 1, 3] =
- 0.08295325725349613
+ 0.05767206310094823
 
 [:, :, 2, 3] =
- 0.839618711196769
+ 0.8641183371587345
 
 [:, :, 3, 3] =
- 0.07742803154973019
+ 0.07820959974032213
 </code></pre><p>The second option is suitable for scenarios with more <strong>complex paths</strong> with sections of different densities. An example is shown in the next chapter, where we propagate neutrinos through the earth.</p><h2 id="Neutrino-Propagation-through-the-Earth-1"><a class="docs-heading-anchor" href="#Neutrino-Propagation-through-the-Earth-1">Neutrino Propagation through the Earth</a><a class="docs-heading-anchor-permalink" href="#Neutrino-Propagation-through-the-Earth-1" title="Permalink"></a></h2><p>The <code>Neurthino.jl</code> package also includes features for the neutrino oscillation probabilities through the Earth, i.e. it contains functions for generating a neutrino path based on the PREM model. In the following example a neutrino oscillogram with a resolution of 200x200 bins is determined. The zenith angles for up going neutrinos (cos(θ)ϵ[-1,0]) and  subsequently the neutrino paths are generated first:</p><pre><code class="language-none">julia&gt; zenith = acos.(range(-1,stop=0,length=200));
 
 julia&gt; paths = Neurthino.prempath(zenith, 2.5, samples=100, discrete_densities=0:0.1:14);</code></pre><p>The detector is assumed to be 2.5km under the earth&#39;s surface (a typical KM3NeT detector block in the Mediterranean), which is a realistic scenario for Water-Cherenkov-Detectors in sea or ice. Each path consists of 100 sections of equal lengths while the matter density is taken from the PREM model. If a vector of densities is passed as <code>discrete_densities</code>, the values are  clipped to the closest value.</p><pre><code class="language-none">julia&gt; energies = 10 .^ range(0, stop=2, length=200);
 
-julia&gt; prob = Pνν(U, H, energies, paths);</code></pre><p>The returned array <code>prob</code> is again of type <code>AxisArray</code> with an axis <code>Path</code> for the path index (instead of the <code>Baseline</code> axis). P(νe&amp;#8594;νe) is determined by <code>prob[InitFlav=Electron, FinalFlav=Electron]</code>, which can be visualised by a <code>heatmap</code>:&lt;br /&gt; <img src="https://github.com/KM3NeT/Neurthino.jl/raw/master/docs/src/assets/earth_prob_elel.png" alt/> &lt;br /&gt; and for P(νμ&amp;#8594;νμ) or <code>prob[InitFlav=Muon, FinalFlav=Muon]</code>:&lt;br /&gt; <img src="https://github.com/KM3NeT/Neurthino.jl/raw/master/docs/src/assets/earth_prob_mumu.png" alt/> &lt;!– <code>@index --&gt; &lt;!--</code> –&gt; &lt;!–  –&gt; &lt;!– <code>@autodocs --&gt; &lt;!-- Modules = [Neurthino] --&gt; &lt;!--</code> –&gt;</p></article><nav class="docs-footer"><a class="docs-footer-nextpage" href="api/">API »</a></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> on <span class="colophon-date" title="Wednesday 3 March 2021 01:05">Wednesday 3 March 2021</span>. Using Julia version 1.5.3.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+julia&gt; prob = Pνν(U, H, energies, paths);</code></pre><p>The returned array <code>prob</code> is again of type <code>AxisArray</code> with an axis <code>Path</code> for the path index (instead of the <code>Baseline</code> axis). P(νe&amp;#8594;νe) is determined by <code>prob[InitFlav=Electron, FinalFlav=Electron]</code>, which can be visualised by a <code>heatmap</code>:&lt;br /&gt; <img src="https://github.com/KM3NeT/Neurthino.jl/raw/master/docs/src/assets/earth_prob_elel.png" alt/> &lt;br /&gt; and for P(νμ&amp;#8594;νμ) or <code>prob[InitFlav=Muon, FinalFlav=Muon]</code>:&lt;br /&gt; <img src="https://github.com/KM3NeT/Neurthino.jl/raw/master/docs/src/assets/earth_prob_mumu.png" alt/> &lt;!– <code>@index --&gt; &lt;!--</code> –&gt; &lt;!–  –&gt; &lt;!– <code>@autodocs --&gt; &lt;!-- Modules = [Neurthino] --&gt; &lt;!--</code> –&gt;</p></article><nav class="docs-footer"><a class="docs-footer-nextpage" href="api/">API »</a></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> on <span class="colophon-date" title="Friday 19 March 2021 20:39">Friday 19 March 2021</span>. Using Julia version 1.5.4.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
