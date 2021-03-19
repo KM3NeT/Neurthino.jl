@@ -327,25 +327,6 @@ function oscprob(osc_params::OscillationParameters, energy, baseline; anti=false
     Pνν(U, H, energy, baseline)
 end
 
-"""
-$(SIGNATURES)
-
-Calculate the transistion probabilities between the neutrino flavours
-
-# Arguments
-- `osc_params::OscillationParameters`:  Oscillation parameters
-- `flavours::Pair{Union{NeutrinoFlavour, Integer}, Union{NeutrinoFlavour, Integer}}`: Pair indicating the initial and final flavour
-- `energy`:                             Energy [GeV]
-- `baseline`:                           Baseline [km]
-- `anti`:                               Is anti neutrino
-
-"""
-function oscprob(osc_params::OscillationParameters, flavors::Pair{T, T}, energy, baseline; anti=false) where {T <: Union{NeutrinoFlavour, Integer}}
-    fromflavor = Int(first(flavors))
-    toflavor = Int(last(flavors))
-    oscprob(osc, energy, baseline, anti)[fromflavor, toflavor]
-end
-
 const Pνν = oscprob
 
 """
