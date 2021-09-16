@@ -41,11 +41,21 @@ Create modified oscillation parameters for neutrino propagation through matter
 - `anti`: Is anti neutrino
 """
 function MatterOscillationMatrices(H_eff, energy, density; zoa=0.5, anti=false)
-    A = sqrt(2) * G_F * N_A * zoa * density
+    A = sqrt(2) * G_F * N_A * density
     if anti
-        H_eff[1,1] -= A * (2 * energy * 1e9)
+        H_eff[1,1] -= A * zoa * 2 * energy * 1e9
     else
-        H_eff[1,1] += A * (2 * energy * 1e9)
+        H_eff[1,1] += A * zoa * 2 * energy * 1e9
+    end
+    # Subtract Vz (= - A*Nn*E*1e9) for any sterile flavours
+    if size(H_eff)[1] > 3
+        for i in 4:size(H_eff)[1]
+            if anti
+                H_eff[i,i] -= A * (1 - zoa) * energy * 1e9
+            else
+                H_eff[i,i] += A * (1 - zoa) * energy * 1e9
+            end
+        end
     end
     tmp = eigen(H_eff)
     return tmp.vectors, tmp.values
@@ -84,7 +94,11 @@ $(SIGNATURES)
 """
 function oscprob(U, H, energy::Vector{T}, path::Vector{Path}; zoa=0.5, anti=false) where {T <: Real}
     energy = convert.(Float64, energy)
-    H_eff = U * Diagonal{ComplexF64}(H) * adjoint(U)
+    if anti
+        H_eff = conj.(U) * Diagonal{ComplexF64}(H) * adjoint(conj.(U))
+    else
+        H_eff = U * Diagonal{ComplexF64}(H) * adjoint(U)
+    end
     A = zeros(ComplexF64, length(energy), length(path), size(U)...)
     cache_size = length(energy) * sum(map(x->length(x.density), path)) 
     lru = LRU{Tuple{Float64, Float64},
