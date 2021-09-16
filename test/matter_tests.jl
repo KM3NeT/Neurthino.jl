@@ -93,3 +93,31 @@ h5open("data/refdata.h5", "r") do file
     refdata = read(file, "matter/prob_nh")
     @test data_matter_nh ≈ refdata atol=0.01
 end
+
+osc = OscillationParameters(4);
+
+setθ!(osc, 1=>2, 0.59);
+setθ!(osc, 1=>3, 0.15);
+setθ!(osc, 2=>3, 0.84);
+setδ!(osc, 1=>3, 3.86);
+
+setΔm²!(osc, 2=>3, -2.523e-3);
+setΔm²!(osc, 1=>2, -7.39e-5);
+
+setθ!(osc, 1=>4, 0);
+setθ!(osc, 2=>4, 0.1);
+setθ!(osc, 3=>4, 0.);
+setΔm²!(osc, 1=>4, -1);
+
+p = Neurthino.Path([13],[12742])
+E = [1000, 2000, 3000]
+test_values = Pνν(osc, E, p, anti=false);
+test_values_anti = Pνν(osc, E, p, anti=true);
+
+@test test_values[1, 1, 2, 2] ≈ 0.984 atol=0.01
+@test test_values[2, 1, 2, 2] ≈ 0.999 atol=0.01
+@test test_values[3, 1, 2, 2] ≈ 0.997 atol=0.01
+
+@test test_values_anti[1, 1, 2, 2] ≈ 0.896 atol=0.01
+@test test_values_anti[2, 1, 2, 2] ≈ 0.006 atol=0.01
+@test test_values_anti[3, 1, 2, 2] ≈ 0.995 atol=0.01
