@@ -25,7 +25,7 @@ test:julia-1.6:
   <<: *test_definition
 
 pages:
-  image: julia:1.6
+  image: docker.km3net.de/base/julia:1.6
   stage: deploy
   script:
     - julia --project=docs -e '
