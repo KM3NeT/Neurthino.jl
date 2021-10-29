@@ -17,19 +17,15 @@ cache:
   key: "$CI_COMMIT_REF_SLUG"
 
 test:julia-1.3:
-  image: julia:1.3
+  image: docker.km3net.de/base/julia:1.3
   <<: *test_definition
 
-test:julia-1.4:
-  image: julia:1.4
-  <<: *test_definition
-
-test:julia-1.5:
-  image: julia:1.5
+test:julia-1.6:
+  image: docker.km3net.de/base/julia:1.6
   <<: *test_definition
 
 pages:
-  image: julia:1.3
+  image: julia:1.6
   stage: deploy
   script:
     - julia --project=docs -e '
