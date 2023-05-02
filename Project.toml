@@ -15,7 +15,7 @@ StaticArrays = "90137ffa-7385-5640-81b9-e52037218182"
 
 [compat]
 AxisArrays = "^0.4"
-DocStringExtensions = "^0.9"
+DocStringExtensions = "0.8, 0.9"
 LRUCache = "1"
 LightGraphs = "1"
 Polynomials = "1, 2, 3"
