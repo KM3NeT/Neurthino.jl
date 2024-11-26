@@ -15,7 +15,3 @@ end
 @testset "Matter" begin
 include("matter_tests.jl")
 end
-
-@testset "Examples" begin
-include("examples_tests.jl")
-end

@@ -12,3 +12,4 @@ _research
 *.synctex.gz(buzy)
 *.out
 ~$*
+\build
