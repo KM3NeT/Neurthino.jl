@@ -9,6 +9,7 @@ makedocs(;
     ),
     pages=[
         "Introduction" => "index.md",
+        "Basic usage" => "basic_usage.md",
         "API" => "api.md",
     ],
     repo="https://github.com/KM3NeT/Neurthino.jl/blob/{commit}{path}#L{line}",
